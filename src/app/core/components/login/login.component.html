@@ -1,0 +1,64 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="relative w-[800px] h-[500px] bg-white shadow-lg rounded-4xl overflow-hidden">
+
+        <!-- Formularios -->
+        <div class="absolute inset-0 flex transition-transform duration-500 ease-in-out">
+
+            <!-- Formulario de Iniciar Sesión -->
+            <div class="w-1/2 p-8 flex flex-col justify-center bg-white">
+                <h1 class="text-2xl font-bold text-center mb-4">Iniciar Sesión</h1>
+                <span class="text-gray-500 text-sm text-center">O use su email y contraseña</span>
+
+                <app-custom-input type="email" placeholder="Email" icon="pi pi-user"></app-custom-input>
+                <app-custom-input type="password" placeholder="Password" icon="pi pi-lock"></app-custom-input>
+
+                <a href="#" class="text-sm text-blue-500 mt-2">¿Olvidaste tu contraseña?</a>
+                <button class="w-full mt-4 font-medium bg-[#512da8] text-white p-2 rounded-2xl" (click)="toggleForm()">Iniciar
+                    Sesión</button>
+            </div>
+
+            <!-- Formulario de Registro -->
+            <div class="w-1/2 p-8 flex flex-col justify-center bg-gray-50">
+                <h1 class="text-2xl font-bold text-center mb-4">Crear Cuenta</h1>
+                <div class="flex justify-center space-x-3 mb-4">
+                    <a href="#" class="text-gray-600"><i class="fa-brands fa-google"></i></a>
+                    <a href="#" class="text-gray-600"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="text-gray-600"><i class="fa-brands fa-github"></i></a>
+                    <a href="#" class="text-gray-600"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+                <span class="text-gray-500 text-sm text-center">O use su email para registrarse</span>
+
+                <app-custom-input type="text" placeholder="Nombre" icon="pi pi-user"></app-custom-input>
+                <app-custom-input type="email" placeholder="Email" icon="pi pi-envelope"></app-custom-input>
+                <app-custom-input type="password" placeholder="Password" icon="pi pi-lock"></app-custom-input>
+
+                <div class="flex justify-center mt-4">
+                    <button class="w-48 font-medium bg-[#512da8] text-white p-2 rounded-2xl text-xs h-10 mt-4"
+                        (click)="toggleForm()">REGISTRARSE</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Panel de Bienvenida -->
+        <div class="absolute inset-0 w-1/2 bg-gradient-to-r from-[#5c6bc0] to-[#512da8] text-white flex flex-col items-center justify-center transition-all duration-700 cubic-bezier(0.68, -0.55, 0.27, 1.55)"
+            [ngClass]="{
+       'translate-x-full': isLoginActive,
+       '-translate-x-0': !isLoginActive,
+       'rounded-l-[150px]': isLoginActive,
+       'rounded-r-[150px]': !isLoginActive
+     }">
+            <h1 class="text-3xl font-bold mb-2">{{ isLoginActive ? 'Te damos la bienvenida' : 'Bienvenido de Nuevo' }}
+            </h1>
+            <p class="text-sm text-center px-6">
+                {{ isLoginActive ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?' }}
+            </p>
+            <button class="mt-4 border-1 border-amber-50 text-amber-50 font-medium px-6 py-2 rounded-2xl shadow text-xs w-50 h-10"
+                (click)="toggleForm()">
+                {{ isLoginActive ? 'REGISTRATE' : 'INICIA SESIÓN' }}
+            </button>
+        </div>
+
+
+    </div>
+</div>
