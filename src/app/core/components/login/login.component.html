@@ -7,14 +7,16 @@
             <!-- Formulario de Iniciar Sesión -->
             <div class="w-1/2 p-8 flex flex-col justify-center bg-white">
                 <h1 class="text-2xl font-bold text-center mb-4">Iniciar Sesión</h1>
-                <span class="text-gray-500 text-sm text-center">O use su email y contraseña</span>
+                <span class="text-gray-500 text-sm text-center">Use su email y contraseña</span>
 
                 <app-custom-input type="email" placeholder="Email" icon="pi pi-user"></app-custom-input>
                 <app-custom-input type="password" placeholder="Password" icon="pi pi-lock"></app-custom-input>
 
-                <a href="#" class="text-sm text-blue-500 mt-2">¿Olvidaste tu contraseña?</a>
-                <button class="w-full mt-4 font-medium bg-[#512da8] text-white p-2 rounded-2xl" (click)="toggleForm()">Iniciar
-                    Sesión</button>
+                <div class="flex justify-center mt-4">
+                    <button class="w-48 font-medium bg-[#512da8] text-white p-2 rounded-2xl text-xs h-10 mt-4" (click)="toggleForm()">INICIAR
+                        SESION</button>
+                </div>
+                
             </div>
 
             <!-- Formulario de Registro -->
@@ -26,7 +28,7 @@
                     <a href="#" class="text-gray-600"><i class="fa-brands fa-github"></i></a>
                     <a href="#" class="text-gray-600"><i class="fa-brands fa-linkedin-in"></i></a>
                 </div>
-                <span class="text-gray-500 text-sm text-center">O use su email para registrarse</span>
+                <span class="text-gray-500 text-sm text-center">Use su email para registrarse</span>
 
                 <app-custom-input type="text" placeholder="Nombre" icon="pi pi-user"></app-custom-input>
                 <app-custom-input type="email" placeholder="Email" icon="pi pi-envelope"></app-custom-input>
