@@ -21,6 +21,7 @@ export class CustomInputComponent implements ControlValueAccessor {
   @Input() type: string = 'text';
   @Input() icon!: string;
   @Input() placeholder!: string;
+  @Input() maxlength?: number;
   
   value: string = '';
 
@@ -41,6 +42,9 @@ export class CustomInputComponent implements ControlValueAccessor {
 
   onInput(event: Event) {
     const inputElement = event.target as HTMLInputElement;
+    if (this.maxlength && inputElement.value.length > this.maxlength) {
+      inputElement.value = inputElement.value.slice(0, this.maxlength);  // Limitar la longitud del valor
+    }
     this.value = inputElement.value;
     this.onChange(this.value);
   }
