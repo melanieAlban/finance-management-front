@@ -20,13 +20,18 @@ import { AuthService } from '../../../services/auth.service';
 export class LoginComponent {
 
   loginForm!: FormGroup;
-  
-  //egisterForm: FormGroup;
+  registerForm!: FormGroup;
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
+    });
+    
+    this.registerForm = this.fb.group({
+      name: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]],  
     });
   }
   
@@ -40,7 +45,7 @@ export class LoginComponent {
   }
 
   mostrarDAtos(){
-    console.log('Datos del formulario de login:', this.loginForm.value);
+    console.log('Datos del formulario de login:', this.registerForm.value);
   }
   
 
@@ -53,6 +58,7 @@ export class LoginComponent {
           console.log('Login exitoso:', response);
           localStorage.setItem('token', response.token);
           console.log('Formulario valido');
+          
         },
         error: (err: any) => {
           console.error('Error de login:', err);
@@ -64,7 +70,22 @@ export class LoginComponent {
   }
   
   onRegister() {
-    
+    if(this.registerForm.valid) {
+      const userData = this.registerForm.value; // Obtiene los datos del formulario de registro
+  
+      this.authService.register(userData).subscribe({
+        next: (response: any) => {
+          console.log('Registro exitoso:', response);
+          this.registerForm.reset(); // Resetea el formulario de registro después de un login exitoso
+        },
+        error: (err: any) => {
+          console.error('Error de registro:', err);
+        }
+      });
+    }
+    else {
+      console.log('Formulario inválido');
+    }
   }
 
 }
