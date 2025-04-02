@@ -1,23 +1,47 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
 @Component({
   selector: 'app-custom-input',
   templateUrl: './custom-input.component.html',
-  imports: [CommonModule, FormsModule],
-  styleUrls: ['./custom-input.component.css']
+  styleUrls: ['./custom-input.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => CustomInputComponent),
+      multi: true
+    }
+  ]
 })
-export class CustomInputComponent {
-  @Input() label!: string; // Etiqueta para el input
-  @Input() type: string = 'text'; // Tipo del input (text o password)
-  @Input() icon!: string; // Icono para el input (ejemplo: 'pi pi-user' o 'pi pi-lock')
-  @Input() placeholder!: string; // Placeholder para el input
-  @Output() valueChange = new EventEmitter<string>(); // Emite el valor del input
-  @Input() value!: string; // Valor del input
+export class CustomInputComponent implements ControlValueAccessor {
+  @Input() label!: string;
+  @Input() type: string = 'text';
+  @Input() icon!: string;
+  @Input() placeholder!: string;
+  
+  value: string = '';
 
-  // Método para capturar el cambio de valor del input
-  onInputChange(event: Event) {
-    const inputElement = event.target as HTMLInputElement; // Casting explícito para acceder a 'value'
-    this.valueChange.emit(inputElement.value); // Emitir el valor del input
+  onChange = (value: string) => {};
+  onTouched = () => {};
+
+  writeValue(value: string): void {
+    this.value = value || '';
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  onInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    this.value = inputElement.value;
+    this.onChange(this.value);
   }
 }

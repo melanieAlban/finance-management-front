@@ -1,23 +1,35 @@
 import { Component, Input } from '@angular/core';
 import { CustomInputComponent } from '../../../shared/components/custom-input/custom-input.component';
-import { FormGroup } from '@angular/forms';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
+import { ReactiveFormsModule } from '@angular/forms'; 
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   imports: [
     CustomInputComponent,
-    CardModule, CommonModule,ButtonModule
+    CardModule, CommonModule,ButtonModule, ReactiveFormsModule
 
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  User!: string;
-  Password!: string;
+
+  loginForm!: FormGroup;
+  
+  //egisterForm: FormGroup;
+
+  constructor(private fb: FormBuilder, private authService: AuthService) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
+    });
+  }
+  
 
   isLogin: boolean = true;
   isLoginActive: boolean = true; // Estado inicial en Login
@@ -27,28 +39,32 @@ export class LoginComponent {
     console.log('Estado de isLoginActive:', this.isLoginActive);
   }
 
-  // Métodos para mostrar el formulario de login o registro
-  showLogin() {
-    this.isLogin = true;
+  mostrarDAtos(){
+    console.log('Datos del formulario de login:', this.loginForm.value);
   }
-
-  showRegister() {
-    this.isLogin = false;
-  }
-
-  onUserInputChange(value: string) {
-    console.log('Valor de usuario:', value);
-  }
-
-  onPasswordInputChange(value: string) {
-    console.log('Valor de contraseña:', value);
-  }
+  
 
   onLogin() {
-    console.log('Iniciar sesión con:', this.User, this.Password);
+    if (this.loginForm.valid) {
+      const credentials = this.loginForm.value; // Obtiene email y password del formulario
+  
+      this.authService.login(credentials).subscribe({
+        next: (response: { token: string }) => {
+          console.log('Login exitoso:', response);
+          localStorage.setItem('token', response.token);
+          console.log('Formulario valido');
+        },
+        error: (err: any) => {
+          console.error('Error de login:', err);
+        }
+      });
+    } else {
+      console.log('Formulario inválido');
+    }
   }
+  
   onRegister() {
-    console.log('Registrarse con:', this.User, this.Password);
+    
   }
 
 }
