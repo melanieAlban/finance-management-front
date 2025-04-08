@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { LoginComponent } from './core/components/login/login.component';
+import { LoginComponent } from './core/components/login/login.component'; // Asegúrate de que la ruta esté correcta
 
 @Component({
   selector: 'app-root',
-  imports: [LoginComponent],
+  standalone: true,
+  imports: [LoginComponent],  // Agrega el componente standalone aquí
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'finance-management-front';
