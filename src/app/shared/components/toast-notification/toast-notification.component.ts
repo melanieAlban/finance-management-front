@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
-import { Ripple } from 'primeng/ripple';
+// import { Ripple } from 'primeng/ripple';
 
 @Component({
   selector: 'app-toast-notification',
