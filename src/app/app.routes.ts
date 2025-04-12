@@ -10,20 +10,19 @@ import { ListTransactionsComponent } from './transactions/components/list-transa
 import { ListBudgetsComponent } from './budgets/components/list-budgets/list-budgets.component';
 
 export const routes: Routes = [
-    {path:"login",component:LoginComponent},
-    {path:"main",component:MainComponent, 
-        
-        children: [
-            { path: '', component: HomeComponent },
-            { path: 'investments', component: ListInvestmentsComponent },
-            { path: 'goals', component: ListGoalsComponent },
-            { path: 'accounts', component: ListAccountsComponent },
-            { path: 'automation', component: ListAutomationComponent },
-            { path: 'transactions', component: ListTransactionsComponent },
-            { path: 'budgets', component: ListBudgetsComponent },
-          ],
-        
-    },
-    { path: '**', redirectTo: 'login' },
-    
+  { path: 'login', component: LoginComponent },
+  {
+    path: 'main',
+    component: MainComponent,
+    children: [
+      { path: '', component: HomeComponent },
+      { path: 'investments', component: ListInvestmentsComponent },
+      { path: 'goals', component: ListGoalsComponent },
+      { path: 'accounts', component: ListAccountsComponent },
+      { path: 'automation', component: ListAutomationComponent },
+      { path: 'transactions', component: ListTransactionsComponent },
+      { path: 'budgets', component: ListBudgetsComponent },
+    ],
+  },
+  { path: '**', redirectTo: 'login' },
 ];
