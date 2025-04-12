@@ -1,0 +1,13 @@
+:host {
+    display: block;
+  }
+  
+  .p-card-header,
+  .p-card-title,
+  .p-card-subheader,
+  .p-card-content,
+  .p-card-footer {
+    display: block !important;
+    min-height: 1rem;
+    padding: 0.5rem;
+  }

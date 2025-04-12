@@ -14,4 +14,7 @@ export class ButtonComponent {
 @Input() type!: string;
 @Input() color!: string;
 @Input() raised!: string
+@Input() rounded!: string;
+@Input() severity!: "success" | "info" | "warn" | "danger" | "help" | "primary" | "secondary" | "contrast" | null | undefined;
+@Input() text!: string;
 }

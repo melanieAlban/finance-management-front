@@ -1,0 +1,22 @@
+<p-card [ngClass]="styleClass">
+ 
+    <div class="p-card-header border-b pb-2" *ngIf="header">
+      {{ header }}
+    </div>
+
+    <div class="p-card-title text-lg font-semibold mt-2" *ngIf="title">
+      {{ title }}
+    </div>
+
+    <div class="p-card-subheader text-sm text-gray-600 mb-2" *ngIf="subtitle">
+      {{ subtitle }}
+    </div>
+
+    <div class="p-card-content py-4">
+      <ng-content></ng-content>
+    </div>
+
+    <div class="p-card-footer border-t pt-2" *ngIf="footer">
+      {{ footer }}
+    </div>
+  </p-card>
