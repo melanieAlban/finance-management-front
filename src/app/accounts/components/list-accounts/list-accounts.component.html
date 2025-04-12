@@ -3,18 +3,64 @@
 
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-2xl font-semibold text-gray-900">Lista de Cuentas</h1>
-      <app-button icon="pi pi-plus" label="Nueva Cuenta" raised="true"/>
+      <app-button icon="pi pi-plus" label="Nueva Cuenta" raised="true" (click)="modalVisible = true"/>
+      
     </div>
-  
+   <app-modal [(visible)]="modalVisible" [width]="'40vw'" header="Crear Cuenta" >
+  <div class="space-y-4">
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Cuenta</label>
+      <app-custom-input
+        [placeholder]="'Ingrese el nombre de la cuenta...'"
+        [type]="'text'" 
+        [(ngModel)]="nombreCuenta"/>
+        
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cuenta</label>
+      <app-select
+        [options]="tipos"
+        [(ngModel)]="tipoCuenta"
+        checkmark="true"
+        showClear="true"
+        placeholder="Seleccione el tipo de cuenta"
+        optionLabel="name"/>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
+      <app-custom-input
+        [placeholder]="'Ingrese el balance...'"
+        [type]="'number'" 
+        [(ngModel)]="balanceCuenta"/>
+    </div>
+
+    <div class="flex justify-end space-x-3 pt-4">
+      <app-button
+        icon="pi pi-check"
+        label="Registrar"
+        raised="true"
+        (click)="modalVisible = false"/>
+      <app-button
+        icon="pi pi-times"
+        label="Cancelar"
+        raised="true"
+        severity="danger"
+        (click)="modalVisible = false"/>
+    </div>
+    
+  </div>
+</app-modal>
+
     <div class="flex flex-wrap gap-4 mb-6 items-end">
       <app-custom-input
-      
         [label]="'Nombre de cuenta'"
         [placeholder]="'Buscar por nombre...'"
       />
   
       <app-select
-      
         [options]="tipos"
         checkmark="true"
         showClear="true"
@@ -23,14 +69,50 @@
       />
     </div>
     
-    <app-table
-    [data]="data"
-      [metadataColumns]="metadataColumns"
-      paginator="true"
-      [rows]="5"
-      [rowsPerPageOptions]="[5, 10, 20]"
-      color="'bg-white border-gray-300 shadow-md rounded-lg'"
-    >
-    </app-table>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <app-card [title]="'Cuenta Personal'" >
+   
+        <div class="flex flex-col items-center mb-4">
+          
+          <div class="flex justify-center">
+            <p-knob [(ngModel)]="value" 
+              [strokeWidth]="10" 
+              [size]="120" 
+              [valueTemplate]="'${value}'"
+              [min]="0" 
+              [max]="1000"
+              [showValue]="true"
+              valueColor="#3b82f6"
+              rangeColor="#e5e7eb">
+            
+            </p-knob>
+          </div>
+          
+          <p class="text-gray-700 text-sm text-center mt-2">
+            Balance: <strong>$5000.00</strong>
+          </p>
+       
+          <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mt-2">
+            Ahorros
+          </span>
+        </div>
+      
+        <div class="flex justify-end space-x-3">
+          <app-button
+            icon="pi pi-pencil"
+            severity="warn"
+            rounded="true"
+            text="true"
+          ></app-button>
+          <app-button
+            icon="pi pi-trash"
+            severity="danger"
+            rounded="true"
+            text="true"
+            
+          ></app-button>
+        </div>
+      </app-card>
+    </div>
   </div>
   
