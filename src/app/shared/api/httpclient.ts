@@ -13,7 +13,7 @@ export class ApiClientService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = sessionStorage.getItem('access-token') ?? '';
+    const token = localStorage.getItem('token') ?? '';
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

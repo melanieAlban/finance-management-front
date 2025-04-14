@@ -4,4 +4,7 @@
 [showClear]="showClear" 
 [placeholder]="placeholder"
 [optionLabel]="optionLabel"
+[optionValue]="optionValue" 
+[(ngModel)]="selectedOption"
+(ngModelChange)="onModelChange($event)"
 class="w-full md:w-56" />

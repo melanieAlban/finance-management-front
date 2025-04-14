@@ -14,6 +14,23 @@ export class AccountService {
 
   create(account: any) {
    
-     return this.api.post('/account',account)
+     return this.api.post('account',account)
   }
+
+  getAll() {
+    return this.api.get<any[]>('account')
+  }
+
+  update(account: any) {
+    return this.api.put('account', account)
+  }
+
+  delete(id: number) {
+    return this.api.delete(`account?accountId=${id}`)
+  }
+  
+  getTotalBalance() {
+    return this.api.get<number>('account/total-balance');
+  }
+  
 }
