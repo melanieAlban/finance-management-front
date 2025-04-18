@@ -7,14 +7,16 @@ import { DialogModule } from 'primeng/dialog';
   styleUrl: './modal.component.css'
 })
 export class ModalComponent {
-  @Input() header ?: string ;
-  @Input() width !: string;
-  @Input() visible !: boolean;
+
+  @Input() header?: string;
+  @Input() width!: string;
+  @Input() visible!: boolean;
 
   @Output() visibleChange = new EventEmitter<boolean>();
 
   onHide() {
-    this.visible = false;
-    this.visibleChange.emit(false); // para el two-way binding
+    // Notifica al padre que el modal se ocultó
+    this.visibleChange.emit(false);
+    console.log('ModalComponent -> onHide, visible false');
   }
 }

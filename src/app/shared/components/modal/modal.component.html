@@ -1,12 +1,12 @@
-<p-dialog 
-  [(visible)]="visible" 
-  (onHide)="onHide()" 
-  [modal]="true" 
-  [style]="{ width: width }" 
-  [draggable]="false" 
+<p-dialog
+  [(visible)]="visible"
+  (onHide)="onHide()"
+  [modal]="true"
+  [style]="{ width: width }"
+  [draggable]="false"
   [resizable]="false"
   [closable]="true"
-  [header]="header">
-
-  <ng-content></ng-content> <!-- para insertar contenido dinámico -->
+  [header]="header"
+>
+  <ng-content></ng-content>
 </p-dialog>
