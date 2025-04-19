@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
@@ -13,6 +13,11 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
+import { AccountService } from '../../../services/account.service';
+import { TextareaModule } from 'primeng/textarea';
+import { IftaLabelModule } from 'primeng/iftalabel';
+import { TransactionService } from '../../../services/transaction.service';
+import { AuthService } from '../../../services/auth.service';
 
 
 @Component({
@@ -31,7 +36,7 @@ import { InputTextModule } from 'primeng/inputtext';
     CalendarModule,
     DropdownModule,
     MultiSelectModule,
-    MessageModule,InputNumber, InputTextModule
+    MessageModule, InputNumber, InputTextModule, TextareaModule, IftaLabelModule
   ],
 })
 export class HeaderComponent {
@@ -42,23 +47,33 @@ export class HeaderComponent {
   cuentaSeleccionada: string | null = null;
   divisaSeleccionada: string = 'USD';
   categoriaSeleccionada: string | null = null;
-  etiquetaSeleccionada: string | null = null;
   fecha: string | null = null;
-  hora: string | null = null;
+  cuentas: any[] = [];
+  descripcion: string | null = null;
+  
+  constructor() {
+    this.obtenerCuentas();
+  }
 
-  cuentas = [
-    { label: 'Cuenta Corriente', value: 'corriente' },
-    { label: 'Tarjeta Crédito', value: 'credito' },
-    { label: 'Ahorros', value: 'ahorros' },
-  ];
+  AccountService = inject(AccountService);
+  TransactionService = inject(TransactionService);
+  AuthService = inject(AuthService);
+
+  obtenerCuentas() {
+    this.AccountService.getAll().subscribe({
+      next: (res) => {
+        this.cuentas = res;
+      },
+      error: (err) => console.error('Error al obtener cuentas:', err)
+    });
+  }
 
   categorias = [
-    { label: 'Comida', value: 'comida', icon: 'pi pi-shopping-bag' },
+    { label: 'Comida', value: 'comida', icon: 'pi pi-shopping-cart' },
     { label: 'Transporte', value: 'transporte', icon: 'pi pi-car' },
     { label: 'Salud', value: 'salud', icon: 'pi pi-heart' },
     { label: 'Sueldo', value: 'sueldo', icon: 'pi pi-wallet' },
   ];
-  
 
   etiquetas = [
     { label: 'Trabajo', value: 'trabajo' },
@@ -70,7 +85,6 @@ export class HeaderComponent {
   openModal() {
     this.display = true;
   }
-  
 
   guardarRegistro() {
     if (
@@ -78,24 +92,31 @@ export class HeaderComponent {
       this.cuentaSeleccionada &&
       this.divisaSeleccionada &&
       this.categoriaSeleccionada &&
-      this.fecha &&
-      this.hora
+      this.fecha
     ) {
+      //const userId = this.AuthService.getUserId(); // Obtener el userId desde el servicio AuthService
+
       const registro = {
-        tipo: this.selectedType,
-        monto: this.monto,
-        cuenta: this.cuentaSeleccionada,
-        divisa: this.divisaSeleccionada,
-        categoria: this.categoriaSeleccionada,
-        etiqueta: this.etiquetaSeleccionada,
-        fecha: this.fecha,
-        hora: this.hora,
+        type: this.selectedType,
+        amount: this.monto,
+        accountId: this.cuentaSeleccionada,
+        userId: 1,  // Usar el userId aquí
+        date: this.fecha,
+        description: this.descripcion,
       };
-      console.log('✅ Registro guardado:', registro);
-      this.display = false;
-      this.resetCampos();
-    } else {
-      console.warn('⚠️ Completa todos los campos obligatorios');
+
+      console.log('Enviando a backend:', registro);
+
+      this.TransactionService.create(registro).subscribe({
+        next: (res) => {
+          console.log('✅ Registro guardado:', res);
+          this.resetCampos();
+        },
+        error: (err) => {
+          console.error('Error al guardar el registro:', err);
+          alert('Error al guardar el registro. Inténtelo nuevamente.');
+        }
+      });
     }
   }
 
@@ -105,8 +126,7 @@ export class HeaderComponent {
       this.cuentaSeleccionada &&
       this.divisaSeleccionada &&
       this.categoriaSeleccionada &&
-      this.fecha &&
-      this.hora
+      this.fecha
     ) {
       const registro = {
         tipo: this.selectedType,
@@ -114,9 +134,7 @@ export class HeaderComponent {
         cuenta: this.cuentaSeleccionada,
         divisa: this.divisaSeleccionada,
         categoria: this.categoriaSeleccionada,
-        etiqueta: this.etiquetaSeleccionada,
-        fecha: this.fecha,
-        hora: this.hora,
+        fecha: this.fecha
       };
       console.log('✅ Registro y crear otro:', registro);
       this.resetCampos();
@@ -129,21 +147,15 @@ export class HeaderComponent {
     this.monto = null;
     this.cuentaSeleccionada = null;
     this.categoriaSeleccionada = null;
-    this.etiquetaSeleccionada = null;
     this.fecha = null;
-    this.hora = null;
     this.selectedType = 'Gasto';
   }
 
-  
-
   limitarCaracteres(event: KeyboardEvent) {
     let valorActual = (this.monto ?? '').toString();
-    
-    // Evitar que se pueda escribir si ya se alcanzaron los 6 caracteres
+
     if (valorActual.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
-      event.preventDefault(); // Detener la acción de escribir más caracteres
+      event.preventDefault();
     }
   }
-  
 }

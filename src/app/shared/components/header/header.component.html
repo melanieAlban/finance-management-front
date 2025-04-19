@@ -17,78 +17,85 @@
   </div>
 </p-toolbar>
 <!-- Modal de Registro -->
-<app-modal [visible]="display" (visibleChange)="display = false" header="Control de Finanzas">
+<app-modal [visible]="display" (visibleChange)="display = false; resetCampos()" header="Control de Finanzas">
   <div class="text-center mb-4">
     <div class="inline-flex rounded-full bg-gradient-to-r from-indigo-600 to-purple-700 p-1">
-      <button class="px-4 py-2 rounded-full text-white hover:bg-white hover:text-indigo-600 font-semibold transition"
-        [ngClass]="{ 'bg-white text-indigo-600': selectedType === 'Gasto',
-        'text-white': selectedType !== 'Gasto' 
-
-         }" (click)="selectedType = 'Gasto'">
-        Gasto
-      </button>
-      <button class="px-4 py-2 rounded-full text-white hover:bg-white hover:text-indigo-600 font-semibold transition"
-        [ngClass]="{ 'bg-white text-indigo-600': selectedType === 'Ingreso', 
-    'text-white': selectedType !== 'Ingreso' 
-  }" (click)="selectedType = 'Ingreso'">
-        Ingreso
-      </button>
-
-      <button class="px-4 py-2 rounded-full text-white hover:bg-white hover:text-indigo-600 font-semibold transition"
-        [ngClass]="{ 'bg-white text-indigo-600': selectedType === 'Transferencia', 'text-white': selectedType !== 'Transferencia' }"
-        (click)="selectedType = 'Transferencia'">
-        Transferencia
-      </button>
+      <ng-container *ngFor="let tipo of ['Gasto', 'Ingreso', 'Transferencia']">
+        <button class="px-4 py-2 rounded-full text-white hover:bg-white hover:text-indigo-600 font-semibold transition"
+          [ngClass]="{
+            'bg-white text-indigo-600': selectedType === tipo,
+            'text-white': selectedType !== tipo
+          }" (click)="selectedType = tipo">
+          {{ tipo }}
+        </button>
+      </ng-container>
     </div>
   </div>
 
-  <div class="space-y-4">
+  <div class="space-y-4" style="min-height: 400px;">
+    <!-- Cantidad -->
     <div>
       <label class="block text-sm font-medium text-gray-600 mb-1">Cantidad</label>
-      <p-inputNumber [(ngModel)]="monto" inputId="currency-us" mode="currency" currency="USD" locale="en-US"
-        placeholder="$0.00" class="w-full"
+      <p-inputNumber [(ngModel)]="monto" mode="currency" currency="USD" locale="en-US" placeholder="$0.00"
+        class="w-full"
         inputStyleClass="!w-full p-3 border border-gray-300 rounded-lg text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400"
         (keydown)="limitarCaracteres($event)" />
     </div>
 
+    <!-- Cuenta y Divisa -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Cuenta</label>
-        <p-dropdown [options]="cuentas" [(ngModel)]="cuentaSeleccionada" placeholder="Selecciona una cuenta"
-          class="w-full"></p-dropdown>
+        <p-dropdown [options]="cuentas" [(ngModel)]="cuentaSeleccionada" optionLabel="name" optionValue="id"
+          placeholder="Selecciona una cuenta" class="w-full" [scrollHeight]="'130px'"></p-dropdown>
       </div>
-
-      <div class="p-field">
-        <label for="divisa" class="block text-sm font-medium text-gray-600 mb-1">Divisa</label>
-        <input pInputText id="divisa" type="text" class="w-full" [disabled]="true" [(ngModel)]="divisaSeleccionada" />
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Divisa</label>
+        <input pInputText type="text" class="w-full" [disabled]="true" [(ngModel)]="divisaSeleccionada" />
       </div>
-
     </div>
 
+    <!-- Categoría y Fecha -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Categoría</label>
         <p-dropdown [options]="categorias" [(ngModel)]="categoriaSeleccionada" optionLabel="label"
-          placeholder="Selecciona una categoría" class="w-full" [scrollHeight]="'130px'" >
+          placeholder="Selecciona una categoría" class="w-full" [scrollHeight]="'130px'">
           <ng-template let-option pTemplate="item">
-            <i [class]="option.icon" class="mr-2"></i>
-            {{ option.label }}
+            <i [class]="option.icon" class="mr-2"></i> {{ option.label }}
+          </ng-template>
+          <ng-template let-categoria pTemplate="selectedItem">
+            <ng-container *ngIf="categoriaSeleccionada">
+              <i [class]="categoria.icon" class="mr-2"></i> {{ categoria.label }}
+            </ng-container>
+            <ng-container *ngIf="!categoriaSeleccionada">
+              Selecciona una categoría
+            </ng-container>
           </ng-template>
         </p-dropdown>
-
       </div>
+
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Fecha</label>
         <input type="date"
           class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
           [(ngModel)]="fecha" />
       </div>
-
     </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-600 mb-1">Descripcion</label>
+      <textarea pTextarea id="description" [(ngModel)]="descripcion" rows="3"
+        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        style="resize: none"></textarea>
+    </div>
+
+    <!-- Botones -->
     <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg mt-4"
       (click)="guardarRegistro()">
       Agregar registro
     </button>
+
     <a href="#" class="block text-center text-indigo-600 hover:underline text-sm font-medium mt-2"
       (click)="agregarYCerrarOtro()">
       Agregar y crear otro
