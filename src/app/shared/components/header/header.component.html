@@ -7,18 +7,145 @@
 
     <!-- Botones a la derecha -->
     <div class="flex items-center space-x-3">
-      <button
-        pButton
-        icon="pi pi-bell"
-        label="Notificaciones"
-        class="p-button-rounded p-button-text"
-      ></button>
-      <button
-        pButton
-        icon="pi pi-user"
-        label="Perfil"
-        class="p-button-rounded p-button-text"
-      ></button>
+      <button pButton icon="pi pi-plus" label="Registrar Transacción"
+        class="p-button-rounded bg-[#1465bb] text-white border-none" (click)="openModal()"></button>
+
+      <button pButton icon="pi pi-bell" label="Notificaciones" class="p-button-rounded p-button-text"></button>
+      <button pButton icon="pi pi-user" label="Perfil" class="p-button-rounded p-button-text"></button>
+
     </div>
   </div>
 </p-toolbar>
+<!-- Modal de Registro -->
+<app-modal [visible]="display" (visibleChange)="display = false; resetCampos()" header="Control de Finanzas">
+  <div class="text-center mb-4">
+    <div class="inline-flex rounded-full bg-gradient-to-r from-indigo-600 to-purple-700 p-1">
+      <ng-container *ngFor="let tipo of ['Gasto', 'Ingreso', 'Transferencia']">
+        <button class="px-4 py-2 rounded-full text-white hover:bg-white hover:text-indigo-600 font-semibold transition"
+          [ngClass]="{
+            'bg-white text-indigo-600': selectedType === tipo,
+            'text-white': selectedType !== tipo
+          }" (click)="selectedType = tipo">
+          {{ tipo }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="space-y-4" style="min-height: 400px;">
+
+    <!-- Si el tipo es Transferencia -->
+    <ng-container *ngIf="selectedType === 'Transferencia'; else noTransferencia">
+      <!-- Monto -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Monto</label>
+        <p-inputNumber [(ngModel)]="monto" mode="currency" currency="USD" locale="en-US" placeholder="$0.00"
+          class="w-full"
+          inputStyleClass="!w-full p-3 border border-gray-300 rounded-lg text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          (keydown)="limitarCaracteres($event)" />
+      </div>
+
+      <!-- Cuenta Origen y Cuenta Destino -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Cuenta Origen</label>
+          <p-dropdown [options]="cuentas" [(ngModel)]="cuentaOrigen" optionLabel="name" optionValue="id"
+            placeholder="Selecciona cuenta origen" class="w-full" [scrollHeight]="'130px'"></p-dropdown>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Cuenta Destino</label>
+          <p-dropdown [options]="cuentas" [(ngModel)]="cuentaDestino" optionLabel="name" optionValue="id"
+            placeholder="Selecciona cuenta destino" class="w-full" [scrollHeight]="'130px'"></p-dropdown>
+        </div>
+      </div>
+
+      <!-- Fecha -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Fecha</label>
+        <input type="date"
+          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          [(ngModel)]="fecha" />
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Descripción</label>
+        <textarea pTextarea [(ngModel)]="descripcion" rows="3"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          style="resize: none"></textarea>
+      </div>
+    </ng-container>
+
+    <!-- Si no es transferencia -->
+    <ng-template #noTransferencia>
+      <!-- Cantidad -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Cantidad</label>
+        <p-inputNumber [(ngModel)]="monto" mode="currency" currency="USD" locale="en-US" placeholder="$0.00"
+          class="w-full"
+          inputStyleClass="!w-full p-3 border border-gray-300 rounded-lg text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          (keydown)="limitarCaracteres($event)" />
+      </div>
+
+      <!-- Cuenta y Divisa -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Cuenta</label>
+          <p-dropdown [options]="cuentas" [(ngModel)]="cuentaSeleccionada" optionLabel="name" optionValue="id"
+            placeholder="Selecciona una cuenta" class="w-full" [scrollHeight]="'130px'"></p-dropdown>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Divisa</label>
+          <input pInputText type="text" class="w-full" [disabled]="true" [(ngModel)]="divisaSeleccionada" />
+        </div>
+      </div>
+
+      <!-- Categoría y Fecha -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Categoría</label>
+          <p-dropdown [options]="categorias" [(ngModel)]="categoriaSeleccionada" optionLabel="label"
+            placeholder="Selecciona una categoría" class="w-full" [scrollHeight]="'130px'">
+            <ng-template let-option pTemplate="item">
+              <i [class]="option.icon" class="mr-2"></i> {{ option.label }}
+            </ng-template>
+            <ng-template let-categoria pTemplate="selectedItem">
+              <ng-container *ngIf="categoriaSeleccionada">
+                <i [class]="categoria.icon" class="mr-2"></i> {{ categoria.label }}
+              </ng-container>
+              <ng-container *ngIf="!categoriaSeleccionada">
+                Selecciona una categoría
+              </ng-container>
+            </ng-template>
+          </p-dropdown>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-600 mb-1">Fecha</label>
+          <input type="date"
+            class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            [(ngModel)]="fecha" />
+        </div>
+      </div>
+
+      <!-- Descripción -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Descripción</label>
+        <textarea pTextarea [(ngModel)]="descripcion" rows="3"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          style="resize: none"></textarea>
+      </div>
+    </ng-template>
+
+    <!-- Botones -->
+    <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg mt-4"
+      (click)="guardarRegistro()">
+      Agregar registro
+    </button>
+
+    <a href="#" class="block text-center text-indigo-600 hover:underline text-sm font-medium mt-2"
+      (click)="agregarYCerrarOtro()">
+      Agregar y crear otro
+    </a>
+  </div>
+</app-modal>

@@ -10,6 +10,9 @@ import { AccountService } from '../../../services/account.service';
 import { SelectModule } from 'primeng/select';
 
 import { ToastComponent } from '../../../shared/components/toast/toast.component';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { TransactionService } from '../../../services/transaction.service';
 
 
  interface TypeInterface {
@@ -31,9 +34,12 @@ interface BalancePorTipo {
 export class ListAccountsComponent {
  
 
+  private destroy$ = new Subject<void>();
+  
   cuentas: any[] = [];
   balancesPorTipo: BalancePorTipo[] = [];
   AccountService= inject(AccountService);
+  TransactionService = inject(TransactionService);
   modalVisible: boolean = false;
   nombreCuenta: string = '';
   balanceCuenta: number = 0;
@@ -49,7 +55,19 @@ export class ListAccountsComponent {
   constructor() {
     this.obtenerCuentas();
     this.obtenerTotalBalance();
+
+    this.TransactionService.transactionsUpdated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.obtenerCuentas(); 
+      });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+  
   showConfirm(cuenta: any) {
     this.cuentaAEliminar = cuenta;
     this.isConfirming = true; 
