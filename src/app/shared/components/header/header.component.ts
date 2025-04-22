@@ -50,6 +50,8 @@ export class HeaderComponent {
   fecha: string | null = null;
   cuentas: any[] = [];
   descripcion: string | null = null;
+  cuentaOrigen: string | null = null;
+  cuentaDestino: string | null = null;
   
   constructor() {
     this.obtenerCuentas();
@@ -66,6 +68,10 @@ export class HeaderComponent {
       },
       error: (err) => console.error('Error al obtener cuentas:', err)
     });
+  }
+  cambiarTipo(tipo: string) {
+    this.selectedType = tipo;
+    this.resetCampos();
   }
 
   categorias = [
@@ -102,13 +108,14 @@ export class HeaderComponent {
         accountId: this.cuentaSeleccionada, 
         date: this.fecha,
         description: this.descripcion,
+        categoria: this.categoriaSeleccionada,
       };
 
       console.log('Enviando a backend:', registro);
 
       this.TransactionService.create(registro).subscribe({
         next: (res) => {
-          console.log('✅ Registro guardado:', res);
+          console.log('Registro guardado:', res);
           this.resetCampos();
         },
         error: (err) => {
@@ -135,7 +142,7 @@ export class HeaderComponent {
         categoria: this.categoriaSeleccionada,
         fecha: this.fecha
       };
-      console.log('✅ Registro y crear otro:', registro);
+      console.log(' Registro y crear otro:', registro);
       this.resetCampos();
     } else {
       console.warn('⚠️ Completa todos los campos obligatorios');
@@ -148,6 +155,7 @@ export class HeaderComponent {
     this.categoriaSeleccionada = null;
     this.fecha = null;
     this.selectedType = 'Gasto';
+    this.descripcion = null;
   }
 
   limitarCaracteres(event: KeyboardEvent) {
