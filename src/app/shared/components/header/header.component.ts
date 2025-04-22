@@ -94,13 +94,12 @@ export class HeaderComponent {
       this.categoriaSeleccionada &&
       this.fecha
     ) {
-      //const userId = this.AuthService.getUserId(); // Obtener el userId desde el servicio AuthService
+      
 
       const registro = {
         type: this.selectedType,
         amount: this.monto,
-        accountId: this.cuentaSeleccionada,
-        userId: 1,  // Usar el userId aquí
+        accountId: this.cuentaSeleccionada, 
         date: this.fecha,
         description: this.descripcion,
       };
