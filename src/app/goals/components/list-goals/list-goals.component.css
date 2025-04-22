@@ -1,0 +1,18 @@
+::ng-deep .boton-negro {
+    background-color: transparent ;
+    color: var(--blue-color) ;
+    border: none;
+    border-radius: 15px;
+    
+}
+
+::ng-deep .boton-negro:hover{
+    background-color: var(--blue-color)!important;
+    color: white !important;
+    border: none !important;
+    
+}
+
+::ng-deep .p-progressbar-value {
+    background-color: var(--sky-color);
+}

@@ -52,6 +52,7 @@ export class ListAccountsComponent {
   detail: string = '';
   cuentaAEliminar: any = null; 
   isConfirming: boolean = false; 
+  nombreBusqueda: string = '';
   constructor() {
     this.obtenerCuentas();
     this.obtenerTotalBalance();
@@ -213,6 +214,27 @@ export class ListAccountsComponent {
           this.detail = 'No se pudo eliminar la cuenta. Inténtelo nuevamente.';
         }
       });
+    }
+  }
+  getAllByName(name: string) {
+    this.AccountService.getAllByName(name).subscribe({
+      next: (res) => {
+        this.cuentas = res;
+      },
+      error: (err) => {
+        console.error('Error al obtener cuentas:', err);
+        this.severity = 'error';
+        this.summary = 'Error';
+        this.detail = 'No se pudieron cargar las cuentas. Inténtelo nuevamente.';
+      }
+    });
+  }
+  buscarCuentasPorNombre(nombre: string) {
+    this.nombreBusqueda = nombre; 
+    if (nombre) {
+      this.getAllByName(nombre);
+    } else {
+      this.obtenerCuentas();
     }
   }
   

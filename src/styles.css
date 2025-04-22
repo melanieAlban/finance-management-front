@@ -4,4 +4,9 @@ body {
     font-family: 'Montserrat', sans-serif;
     
 }
-
+:root {
+    
+    --blue-color: #002f4a;
+    --sky-color:#41A86D;
+}
+  
