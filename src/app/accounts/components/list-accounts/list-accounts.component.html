@@ -69,6 +69,8 @@
       <app-custom-input
         [label]="'Nombre de cuenta'"
         [placeholder]="'Buscar por nombre...'"
+        [(ngModel)]="nombreBusqueda"
+    (ngModelChange)="buscarCuentasPorNombre($event)"
       />
   
       <p-select
