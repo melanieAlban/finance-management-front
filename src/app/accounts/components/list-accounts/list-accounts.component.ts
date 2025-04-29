@@ -32,7 +32,6 @@ interface BalancePorTipo {
   styleUrl: './list-accounts.component.css'
 })
 export class ListAccountsComponent {
- 
 
   private destroy$ = new Subject<void>();
   
