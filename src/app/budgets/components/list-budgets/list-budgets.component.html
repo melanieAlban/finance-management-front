@@ -8,7 +8,7 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
     <app-card *ngFor="let presupuesto of presupuestos">
-      <div class="flex flex-col space-y-4 p-4">
+      <div class="flex flex-col space-y-2 p-2">
 
         <!-- Período -->
         <div class="text-sm font-semibold text-indigo-600 text-center">
@@ -43,12 +43,8 @@
           Total Gastado: ${{ presupuesto.currentAmount }}
         </div>
 
-
-        
-
-        <!-- Botones -->
         <div class="flex justify-end space-x-3 mt-2">
-          <app-button icon="pi pi-pencil" severity="warn" rounded="true" text="true"></app-button>
+          <app-button icon="pi pi-pencil" severity="warn" rounded="true" text="true" (click)="editarPresupuesto(presupuesto)"></app-button>
           <app-button icon="pi pi-trash" severity="danger" rounded="true" text="true" (click)="deletePresupuesto(presupuesto)"></app-button>
         </div>
 
@@ -57,7 +53,9 @@
   </div>
 
 
-  <app-modal [visible]="display" (visibleChange)="display = false; resetCampos()" header="Agregar Presupuesto">
+  <app-modal [visible]="display" 
+           (visibleChange)="closeModal()" 
+           [header]="isEditing ? 'Editar Presupuesto' : 'Agregar Presupuesto'">
     <div class="space-y-4" style="width: 500px; min-height: 200px;">
 
       <!-- Cantidad -->
@@ -106,7 +104,7 @@
       <!-- Botón -->
       <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg mt-5"
         (click)="guardarPresupuesto()">
-        Agregar Presupuesto
+        {{ isEditing ? 'Actualizar Presupuesto' : 'Agregar Presupuesto' }}
       </button>
 
     </div>

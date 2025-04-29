@@ -44,6 +44,7 @@ export class ListBudgetsComponent {
 
   private destroy$ = new Subject<void>();
   BudgetService = inject(BudgetService);
+  messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   display = false;
   cantidad: number | null = null;
@@ -51,6 +52,8 @@ export class ListBudgetsComponent {
   periodoSeleccionado: string = '';
   categoriaSeleccionada: Categoria | null = null;
   presupuestos: any[] = [];
+  presupuestoEditando: any = null; 
+  isEditing: boolean = false;
   
   TransactionService = inject(TransactionService);
   constructor() {
@@ -72,36 +75,77 @@ export class ListBudgetsComponent {
   
 
   guardarPresupuesto() {
-    console.log('Datos antes de validar:', {
-      cantidad: this.cantidad,
-      nombre: this.nombre,
-      periodoSeleccionado: this.periodoSeleccionado,
-      categoriaSeleccionada: this.categoriaSeleccionada
-    });
+    
   
     if(this.cantidad && this.periodoSeleccionado && this.categoriaSeleccionada) {
-      const nuevoPresupuesto = {
+      const presupuesto: any = {
         period: this.periodoSeleccionado,
         category: this.categoriaSeleccionada.value,
         maxAmount: this.cantidad,
       };
+  
+      if (this.presupuestoEditando) {
+        presupuesto.id = this.presupuestoEditando.id;
+        presupuesto.userId = this.presupuestoEditando.userId; 
+      }
       
-      console.log('Enviando presupuesto:', nuevoPresupuesto);
+      console.log('Enviando presupuesto:', presupuesto);
       
-      this.BudgetService.create(nuevoPresupuesto).subscribe({
-        next: (data) => {
-          console.log('Respuesta del servidor:', data);
-          this.obtenerPresupuestos();
-          this.resetCampos();
-          this.closeModal();
-        },
-        error: (err) => {
-          console.error('Error al crear presupuesto:', err);
-        }
-      });
+      if (this.presupuestoEditando) {
+        this.BudgetService.update(presupuesto).subscribe({
+          next: () => {
+            this.obtenerPresupuestos();
+            this.resetCampos();
+            this.closeModal();
+            this.presupuestoEditando = null;
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Presupuesto actualizado correctamente'
+            }); 
+            this.isEditing = false;
+          },
+          error: (err) => {
+            this.messageService.add({
+              severity: 'error',  
+              summary: 'Error',
+              detail: 'Error al actualizar el presupuesto'
+            }); 
+
+          }
+        });
+      } else {
+        this.BudgetService.create(presupuesto).subscribe({
+          next: () => {
+            this.obtenerPresupuestos();
+            this.resetCampos();
+            this.closeModal();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Presupuesto creado correctamente'
+            });
+            this.isEditing = false;
+          },
+          error: (err) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al crear el presupuesto'
+            });
+            console.error('Error al crear presupuesto:', err);
+            
+          }
+        });
+      }
     } else {
+      this.messageService.add({
+        severity: 'warn',   
+        summary: 'Advertencia',
+        detail: 'Faltan campos requeridos'
+      });
       console.warn('Faltan campos requeridos');
-      // Podrías mostrar un mensaje al usuario aquí
+      
     }
   }
   
@@ -111,6 +155,9 @@ export class ListBudgetsComponent {
 
   closeModal() {
     this.display = false;
+    this.resetCampos();
+    this.isEditing = false;
+    this.presupuestoEditando = null;
   }
   limitarCaracteres(event: KeyboardEvent) {
     let valorActual = (this.cantidad ?? '').toString();
@@ -120,7 +167,7 @@ export class ListBudgetsComponent {
     }
   }
   resetCampos() {
-    this.cantidad = 0; 
+    this.cantidad = null; 
     this.nombre = '';
     this.periodoSeleccionado = '';
     this.categoriaSeleccionada = null;
@@ -141,6 +188,22 @@ export class ListBudgetsComponent {
     { label: 'Otros', value: 'OTROS', icon: 'pi pi-tags' }
   ];
 
+
+ 
+
+editarPresupuesto(presupuesto: any) {
+  this.isEditing = true;
+  this.presupuestoEditando = presupuesto;
+  this.cantidad = presupuesto.maxAmount;
+  this.periodoSeleccionado = presupuesto.period;
+  
+  const categoriaEncontrada = this.categorias.find(cat => cat.value === presupuesto.category);
+  this.categoriaSeleccionada = categoriaEncontrada ?? null;
+
+  this.openModal();
+}
+
+
   deletePresupuesto(presupuesto: any) {
     this.confirmationService.confirm({
       message: `¿Está seguro que desea eliminar el presupuesto de ${presupuesto.category}?`,
@@ -153,10 +216,20 @@ export class ListBudgetsComponent {
       accept: () => {
         this.BudgetService.delete(presupuesto.id).subscribe({
           next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'Presupuesto eliminado correctamente'
+            });
             console.log('Presupuesto eliminado con éxito');
             this.obtenerPresupuestos();
           },
           error: (err) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Error al eliminar el presupuesto'
+            });
             console.error('Error al eliminar presupuesto:', err);
           }
         });

@@ -18,6 +18,8 @@ import { TextareaModule } from 'primeng/textarea';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TransactionService } from '../../../services/transaction.service';
 import { AuthService } from '../../../services/auth.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 interface Categoria {
   label: string;
@@ -37,12 +39,13 @@ interface Categoria {
     MenuModule,
     CommonModule,
     ModalComponent,
-    DialogModule,
+    DialogModule, ToastModule,
     CalendarModule,
     DropdownModule,
     MultiSelectModule,
     MessageModule, InputNumber, InputTextModule, TextareaModule, IftaLabelModule
   ],
+  providers: [MessageService]
 })
 
 export class HeaderComponent {
@@ -58,7 +61,8 @@ export class HeaderComponent {
   descripcion: string | null = null;
   cuentaOrigen: string | null = null;
   cuentaDestino: string | null = null;
-  
+  messageService = inject(MessageService);
+
   constructor() {
     this.obtenerCuentas();
   }
@@ -72,7 +76,16 @@ export class HeaderComponent {
       next: (res) => {
         this.cuentas = res;
       },
-      error: (err) => console.error('Error al obtener cuentas:', err)
+      error: (err) => {
+        console.error('Error al obtener cuentas:', err);
+      
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar las cuentas',
+          life: 5000
+        });
+      }
     });
   }
   cambiarTipo(tipo: string) {
@@ -109,15 +122,15 @@ export class HeaderComponent {
       this.categoriaSeleccionada &&
       this.fecha
     ) {
-      
+
 
       const registro = {
         type: this.selectedType,
         amount: this.monto,
-        accountId: this.cuentaSeleccionada, 
+        accountId: this.cuentaSeleccionada,
         date: this.fecha,
         description: this.descripcion,
-        category:  this.categoriaSeleccionada.value,
+        category: this.categoriaSeleccionada.value,
       };
 
       console.log('Enviando a backend:', registro);
@@ -126,7 +139,7 @@ export class HeaderComponent {
         next: (res) => {
           console.log('Registro guardado:', res);
           this.resetCampos();
-          this.display = false; 
+          this.display = false;
         },
         error: (err) => {
           console.error('Error al guardar el registro:', err);

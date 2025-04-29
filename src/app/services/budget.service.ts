@@ -26,10 +26,10 @@ export class BudgetService {
       return this.api.get<any[]>('budget')
     }
   
-    update(budget: any) {
-      return this.api.put('budget', budget)
-    }
-  
+      update(budget: any) {
+        return this.api.put('budget', budget)
+      }
+    
     delete(id: number) {
       return this.api.delete(`budget?budgetId=${id}`)
     }
