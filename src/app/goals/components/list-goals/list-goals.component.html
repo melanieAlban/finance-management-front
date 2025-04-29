@@ -1,19 +1,23 @@
 <p-confirmDialog></p-confirmDialog>
 <p-toast></p-toast>
 
-<h3 class="text-2xl font-bold mb-4 flex justify-center items-center">Mis Metas</h3>
+<h3 class="text-2xl font-bold mb-4 flex justify-center items-center">
+  Mis Metas
+</h3>
 <div class="flex justify-end mt-6">
   <p-button
-  label="Crear Meta" 
-  icon="pi pi-check"
-  (click)="displayCreateGoalModal = true"
-  styleClass="boton-azul"
-></p-button>
-
+    label="Crear Meta"
+    icon="pi pi-check"
+    (click)="openCreateGoalModal()"
+    styleClass="boton-azul"
+  ></p-button>
 </div>
 
 <div *ngIf="goals.length > 0" class="grid gap-4 mt-4">
-  <p-card *ngFor="let goal of goals" class="shadow-2xl relative shadow-lg border border-gray-200">
+  <p-card
+    *ngFor="let goal of goals"
+    class="shadow-2xl relative shadow-lg border border-gray-200"
+  >
     <div class="absolute top-2 right-2 elipsis flex items-center gap-2">
       <div class="flex items-center text-base text-gray-600">
         <span class="mr-1">🔥</span>
@@ -26,16 +30,15 @@
       ></p-button>
     </div>
 
-  
-
     <h2 class="mb-10 font-extrabold">{{ goal.name }}</h2>
     <div class="text-sm text-gray-600 mb-8">
       <p>
-        <i class="pi pi-clock mr-2"></i>Frecuencia de Abono: 
+        <i class="pi pi-clock mr-2"></i>Frecuencia de Abono:
         {{ getFrequencyLabel(goal.depositFrequency) }}
       </p>
       <p>
-        <i class="pi pi-bell mr-2"></i>Se recomienda abonar {{ calculateSuggestedAmountForGoal(goal) }} 
+        <i class="pi pi-bell mr-2"></i>Se recomienda abonar
+        {{ calculateSuggestedAmountForGoal(goal) }}
         {{ getFrequencyLabel(goal.depositFrequency).toLowerCase() }}
       </p>
     </div>
@@ -46,23 +49,31 @@
         ${{ goal.currentBalance }}/${{ goal.targetAmount }}
       </div>
       <div class="absolute top-[-1.5rem] right-0 text-sm text-gray-600">
-        {{ goal.deadline | date: 'dd/MM/yyyy' }}
+        {{ goal.deadline | date : "dd/MM/yyyy" }}
       </div>
     </div>
     <div class="flex justify-center items-center gap-100">
-      <p-button styleClass="w-80 boton-negro" icon="pi pi-wallet" label="Agregar Fondos" (click)="selectGoal(goal)"></p-button>
-      <p-button styleClass="w-80 boton-negro" icon="pi pi-cog" label="Editar Frecuencia" (click)="displayEditFrequencyModal = true"></p-button>
+      <p-button
+        styleClass="w-80 boton-negro"
+        icon="pi pi-wallet"
+        label="Agregar Fondos"
+        (click)="selectGoal(goal)"
+      ></p-button>
+      <p-button
+        styleClass="w-80 boton-negro"
+        icon="pi pi-cog"
+        label="Editar Frecuencia"
+        (click)="displayEditFrequencyModal = true"
+      ></p-button>
     </div>
-
-    
   </p-card>
-    <p-menu
-      #menu
-      [popup]="true"
-      [model]="menuItems"
-      [appendTo]="'body'"
-      styleClass="shadow-lg border border-gray-200 custom-menu"
-    ></p-menu>
+  <p-menu
+    #menu
+    [popup]="true"
+    [model]="menuItems"
+    [appendTo]="'body'"
+    styleClass="shadow-lg border border-gray-200 custom-menu"
+  ></p-menu>
 </div>
 
 <div *ngIf="goals.length === 0" class="text-center text-gray-600 mt-10">
@@ -70,7 +81,6 @@
 </div>
 
 <p-dialog
-
   [(visible)]="displayCreateGoalModal"
   [modal]="true"
   [style]="{ width: '550px' }"
@@ -83,10 +93,16 @@
   header="{{ isEditing ? 'Actualizar Meta' : 'Crear Meta' }}"
 >
   <form>
-    <div class="p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg shadow-lg">
+    <div
+      class="p-6 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg shadow-lg"
+    >
       <div class="space-y-4">
         <div>
-          <label for="goalName" class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Meta</label>
+          <label
+            for="goalName"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Nombre de la Meta</label
+          >
           <input
             id="goalName"
             name="goalName"
@@ -97,10 +113,18 @@
             placeholder="Ej. Viaje a Europa"
             [required]="true"
           />
-          <small *ngIf="!newGoal.name && formSubmitted" class="text-red-500 text-xs">Este campo es obligatorio</small>
+          <small
+            *ngIf="!newGoal.name && formSubmitted"
+            class="text-red-500 text-xs"
+            >Este campo es obligatorio</small
+          >
         </div>
         <div>
-          <label for="goalAmount" class="block text-sm font-medium text-gray-700 mb-1">Monto Total ($)</label>
+          <label
+            for="goalAmount"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Monto Total ($)</label
+          >
           <input
             id="goalAmount"
             name="goalAmount"
@@ -112,10 +136,18 @@
             min="0"
             [required]="true"
           />
-          <small *ngIf="!newGoal.targetAmount && formSubmitted" class="text-red-500 text-xs">Este campo es obligatorio</small>
+          <small
+            *ngIf="!newGoal.targetAmount && formSubmitted"
+            class="text-red-500 text-xs"
+            >Este campo es obligatorio</small
+          >
         </div>
         <div>
-          <label for="goalDeadline" class="block text-sm font-medium text-gray-700 mb-1">Fecha Límite</label>
+          <label
+            for="goalDeadline"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Fecha Límite</label
+          >
           <p-calendar
             id="goalDeadline"
             name="goalDeadline"
@@ -125,10 +157,18 @@
             [minDate]="today"
             styleClass="w-full custom-calendar"
           ></p-calendar>
-          <small *ngIf="!newGoal.deadline && formSubmitted" class="text-red-500 text-xs">Este campo es obligatorio</small>
+          <small
+            *ngIf="!newGoal.deadline && formSubmitted"
+            class="text-red-500 text-xs"
+            >Este campo es obligatorio</small
+          >
         </div>
         <div>
-          <label for="goalFrequency" class="block text-sm font-medium text-gray-700 mb-1">Frecuencia de Abono</label>
+          <label
+            for="goalFrequency"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Frecuencia de Abono</label
+          >
           <div class="flex gap-3">
             <p-dropdown
               id="goalFrequency"
@@ -137,18 +177,22 @@
               [options]="frequencies"
               placeholder="Selecciona una frecuencia"
               styleClass="w-full rounded-lg"
-              (onChange)="onFrequencyChange()" 
+              (onChange)="onFrequencyChange()"
             ></p-dropdown>
             <input
-            type="text"
-            pInputText
-            [value]="suggestedAmount"
-            class="w-32 p-2 border border-gray-300 rounded-lg text-center font-semibold text-gray-600"
-            placeholder="$0.00"
-            disabled
+              type="text"
+              pInputText
+              [value]="suggestedAmount"
+              class="w-32 p-2 border border-gray-300 rounded-lg text-center font-semibold text-gray-600"
+              placeholder="$0.00"
+              disabled
             />
           </div>
-          <small *ngIf="!newGoal.depositFrequency && formSubmitted" class="text-red-500 text-xs">Este campo es obligatorio</small>
+          <small
+            *ngIf="!newGoal.depositFrequency && formSubmitted"
+            class="text-red-500 text-xs"
+            >Este campo es obligatorio</small
+          >
         </div>
       </div>
       <div class="mt-6 flex justify-end gap-3">
@@ -158,10 +202,9 @@
           (click)="displayCreateGoalModal = false"
         ></p-button>
         <p-button
-        label="{{ isEditing ? 'Guardar Cambios' : 'Crear Meta' }}"
+          label="{{ isEditing ? 'Guardar Cambios' : 'Crear Meta' }}"
           styleClass="boton-crear"
           (click)="saveGoal()"
-         
         ></p-button>
       </div>
     </div>
@@ -180,10 +223,16 @@
   header="Agregar Abono 💸"
 >
   <form>
-    <div class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg">
+    <div
+      class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg"
+    >
       <div class="space-y-4">
         <div>
-          <label for="paymentAmount" class="block text-sm font-medium text-gray-700 mb-1">Monto a Abonar ($)</label>
+          <label
+            for="paymentAmount"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Monto a Abonar ($)</label
+          >
           <input
             id="paymentAmount"
             name="paymentAmount"
@@ -212,7 +261,6 @@
   </form>
 </p-dialog>
 
-
 <p-dialog
   [(visible)]="displayEditFrequencyModal"
   [modal]="true"
@@ -225,10 +273,16 @@
   header="Editar Frecuencia ⚙️"
 >
   <form>
-    <div class="flex flex-col h-full p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg">
+    <div
+      class="flex flex-col h-full p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg"
+    >
       <div class="flex-1 space-y-3">
         <div>
-          <label for="editFrequency" class="block text-sm font-medium text-gray-700 mb-1">Frecuencia de Abono</label>
+          <label
+            for="editFrequency"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Frecuencia de Abono</label
+          >
           <div class="flex gap-3">
             <p-dropdown
               id="editFrequency"
