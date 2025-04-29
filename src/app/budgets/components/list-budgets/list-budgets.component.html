@@ -1,1 +1,118 @@
-<p>list-budgets works!</p>
+<div class="bg-gray-100 text-gray-900 p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold text-gray-900">Planificacion de Presupuestos</h1>
+    <button pButton icon="pi pi-plus" label="Agregar" class="p-button-rounded bg-[#1465bb] text-white border-none"
+      (click)="openModal()"></button>
+
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+    <app-card *ngFor="let presupuesto of presupuestos">
+      <div class="flex flex-col space-y-4 p-4">
+
+        <!-- Período -->
+        <div class="text-sm font-semibold text-indigo-600 text-center">
+          {{ presupuesto.period | titlecase }}
+        </div>
+
+        <!-- Nombre del presupuesto -->
+        <div class="text-xl font-bold text-center text-gray-800">
+          {{ presupuesto.category }}
+        </div>
+        <div class="text-sm text-gray-600 text-center">
+          Presupuesto: ${{ (presupuesto.maxAmount)}}
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+          <div class="h-full transition-all duration-500 ease-in-out" [ngClass]="{
+                     'bg-green-500': (presupuesto.currentAmount / presupuesto.maxAmount)< 0.5,
+                     'bg-yellow-500': (presupuesto.currentAmount / presupuesto.maxAmount) >= 0.5 && (presupuesto.currentAmount / presupuesto.maxAmount) < 0.8,
+                     'bg-red-500': (presupuesto.currentAmount / presupuesto.maxAmount) >= 0.8
+                   }" [style.width.%]="(presupuesto.currentAmount / presupuesto.maxAmount) * 100">
+          </div>
+        </div>
+
+        <!-- Porcentaje gastado -->
+        <div class="text-sm text-gray-600 text-center">
+          {{ (presupuesto.currentAmount / presupuesto.maxAmount) * 100 | number:'1.0-0' }}% gastado
+        </div>
+
+        <!-- Total gastado -->
+        <div class="text-sm text-gray-600 text-center">
+          Total Gastado: ${{ presupuesto.currentAmount }}
+        </div>
+
+
+        
+
+        <!-- Botones -->
+        <div class="flex justify-end space-x-3 mt-2">
+          <app-button icon="pi pi-pencil" severity="warn" rounded="true" text="true"></app-button>
+          <app-button icon="pi pi-trash" severity="danger" rounded="true" text="true" (click)="deletePresupuesto(presupuesto)"></app-button>
+        </div>
+
+      </div>
+    </app-card>
+  </div>
+
+
+  <app-modal [visible]="display" (visibleChange)="display = false; resetCampos()" header="Agregar Presupuesto">
+    <div class="space-y-4" style="width: 500px; min-height: 200px;">
+
+      <!-- Cantidad -->
+      <div>
+        <label class="block text-sm font-medium text-gray-600 mb-1">Cantidad</label>
+        <p-inputNumber [(ngModel)]="cantidad" mode="currency" currency="USD" locale="en-US" placeholder="$0.00"
+          class="w-full"
+          inputStyleClass="!w-full p-3 border border-gray-300 rounded-lg text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          (keydown)="limitarCaracteres($event)" />
+      </div>
+
+      <!-- Periodo y Categoría en una sola línea -->
+      <div class="flex gap-4">
+        <!-- Periodo -->
+        <div class="w-1/2">
+          <label class="block text-sm font-medium text-gray-600 mb-1">Periodo</label>
+          <p-dropdown [options]="periodos" [(ngModel)]="periodoSeleccionado" optionLabel="label" optionValue="value"
+            placeholder="Selecciona un periodo" class="w-full" appendTo="body" [style]="{ width: '100%' }"
+            [panelStyle]="{ width: '100%' }" [scrollHeight]="'130px'">
+          </p-dropdown>
+
+        </div>
+
+        <!-- Categoría -->
+        <div class="w-1/2">
+          <label class="block text-sm font-medium text-gray-600 mb-1">Categoría</label>
+          <p-dropdown [options]="categorias" [(ngModel)]="categoriaSeleccionada" optionLabel="label"
+            placeholder="Selecciona una categoría" class="w-full" appendTo="body"
+            [style]="{ width: '100%' }"
+            [panelStyle]="{ width: '100%' }" [scrollHeight]="'130px'">
+            <ng-template let-option pTemplate="item">
+              <i [class]="option.icon" class="mr-2"></i> {{ option.label }}
+            </ng-template>
+            <ng-template let-categoria pTemplate="selectedItem">
+              <ng-container *ngIf="categoriaSeleccionada">
+                <i [class]="categoria.icon" class="mr-2"></i> {{ categoria.label }}
+              </ng-container>
+              <ng-container *ngIf="!categoriaSeleccionada">
+                Selecciona una categoría
+              </ng-container>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- Botón -->
+      <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg mt-5"
+        (click)="guardarPresupuesto()">
+        Agregar Presupuesto
+      </button>
+
+    </div>
+  </app-modal>
+  <p-toast></p-toast>
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+
+</div>

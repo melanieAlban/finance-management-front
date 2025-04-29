@@ -19,6 +19,11 @@ import { IftaLabelModule } from 'primeng/iftalabel';
 import { TransactionService } from '../../../services/transaction.service';
 import { AuthService } from '../../../services/auth.service';
 
+interface Categoria {
+  label: string;
+  value: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-header',
@@ -39,6 +44,7 @@ import { AuthService } from '../../../services/auth.service';
     MessageModule, InputNumber, InputTextModule, TextareaModule, IftaLabelModule
   ],
 })
+
 export class HeaderComponent {
   display = false;
   selectedType: string = 'Gasto';
@@ -46,7 +52,7 @@ export class HeaderComponent {
   monto: number | null = null;
   cuentaSeleccionada: string | null = null;
   divisaSeleccionada: string = 'USD';
-  categoriaSeleccionada: string | null = null;
+  categoriaSeleccionada: Categoria | null = null;
   fecha: string | null = null;
   cuentas: any[] = [];
   descripcion: string | null = null;
@@ -75,10 +81,13 @@ export class HeaderComponent {
   }
 
   categorias = [
-    { label: 'Comida', value: 'comida', icon: 'pi pi-shopping-cart' },
-    { label: 'Transporte', value: 'transporte', icon: 'pi pi-car' },
-    { label: 'Salud', value: 'salud', icon: 'pi pi-heart' },
-    { label: 'Sueldo', value: 'sueldo', icon: 'pi pi-wallet' },
+    { label: 'Comida', value: 'COMIDA', icon: 'pi pi-shopping-cart' },
+    { label: 'Transporte', value: 'TRANSPORTE', icon: 'pi pi-car' },
+    { label: 'Salud', value: 'SALUD', icon: 'pi pi-heart' },
+    { label: 'Sueldo', value: 'SUELDO', icon: 'pi pi-wallet' },
+    { label: 'Vivienda', value: 'VIVIENDA', icon: 'pi pi-home' },
+    { label: 'Entretenimiento', value: 'ENTRETENIMIENTO', icon: 'pi pi-video' },
+    { label: 'Otros', value: 'OTROS', icon: 'pi pi-box' },
   ];
 
   etiquetas = [
@@ -108,7 +117,7 @@ export class HeaderComponent {
         accountId: this.cuentaSeleccionada, 
         date: this.fecha,
         description: this.descripcion,
-        categoria: this.categoriaSeleccionada,
+        category:  this.categoriaSeleccionada.value,
       };
 
       console.log('Enviando a backend:', registro);
@@ -117,6 +126,7 @@ export class HeaderComponent {
         next: (res) => {
           console.log('Registro guardado:', res);
           this.resetCampos();
+          this.display = false; 
         },
         error: (err) => {
           console.error('Error al guardar el registro:', err);
