@@ -1,12 +1,12 @@
 :host ::ng-deep .p-button.p-button-text {
-    color: #4b5563 !important; 
-  }
-  
-  :host ::ng-deep .p-button-icon {
-    color: #4b5563 !important; 
-  }
-  
-  /* En app-modal.component.css */
+  color: #4b5563 !important;
+}
+
+  p .p-button-icon {
+  color: #fff !important;
+}
+
+/* En app-modal.component.css */
 :host ::ng-deep .p-dialog {
   width: 600px !important;
   min-height: 500px;
