@@ -1,5 +1,6 @@
 :host {
   display: block;
+  width: 100%;
 }
 
 .flex-wrap {
@@ -19,17 +20,38 @@ button {
   padding: 0;
   cursor: pointer;
 }
+
 ::ng-deep .compact-carousel {
-    width: calc(100% - 140px); /* Restamos el ancho del botón + margen */
-  }
+  width: calc(100% - 140px); /* Restamos el ancho del botón + margen */
+}
+
+::ng-deep .compact-carousel .p-carousel-item {
+  margin: 0 0.25rem !important;
+}
+
+::ng-deep .compact-carousel .p-carousel-prev,
+::ng-deep .compact-carousel .p-carousel-next {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0 0.1rem;
+}
+
+
+.home-container {
+  width: 100%;
+}
+
+::ng-deep p-carousel {
+  max-width: 100% ;
+}
+
+::ng-deep .p-carousel-header {
+  margin: 0 auto;
+  margin-bottom: 1rem;
+}
+
+::ng-deep  .color-buton .p-button{
+  background-color: var(--blue-color) !important;
+  border: none !important;
   
-  ::ng-deep .compact-carousel .p-carousel-item {
-    margin: 0 0.25rem !important;
-  }
-  
-  ::ng-deep .compact-carousel .p-carousel-prev,
-  ::ng-deep .compact-carousel .p-carousel-next {
-    width: 1.5rem;
-    height: 1.5rem;
-    margin: 0 0.10rem;
-  }
+}
