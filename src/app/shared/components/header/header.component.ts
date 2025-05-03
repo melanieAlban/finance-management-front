@@ -20,6 +20,7 @@ import { TransactionService } from '../../../services/transaction.service';
 import { AuthService } from '../../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { NotificacionesComponent } from "../notification/notification.component";
 
 interface Categoria {
   label: string;
@@ -43,8 +44,9 @@ interface Categoria {
     CalendarModule,
     DropdownModule,
     MultiSelectModule,
-    MessageModule, InputNumber, InputTextModule, TextareaModule, IftaLabelModule
-  ],
+    MessageModule, InputNumber, InputTextModule, TextareaModule, IftaLabelModule,
+    NotificacionesComponent
+],
   providers: [MessageService]
 })
 
@@ -110,6 +112,12 @@ export class HeaderComponent {
     { label: 'Viaje', value: 'viaje' },
   ];
 
+  notificacionesVisibles: boolean = false;
+
+  mostrarNotificaciones() {
+    this.notificacionesVisibles = true;
+  }
+  
   openModal() {
     this.display = true;
   }
