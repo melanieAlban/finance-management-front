@@ -1,4 +1,4 @@
-<div class="flex flex-wrap gap-4 p-4 home-container">
+<div class="flex flex-wrap gap-4 p-4 home-container flex-col">
   <div class="flex flex-col" style="width: 100%;">
     <p-carousel [value]="cuentas" [numVisible]="6" [numScroll]="1" [responsiveOptions]="carouselResponsiveOptions">
       <ng-template #header>
@@ -35,7 +35,6 @@
     </p-carousel>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 pb-6">
-
     <div class="flex items-center p-5 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl shadow-lg">
       <i class="pi pi-credit-card text-3xl text-blue-700 mr-4"></i>
       <div>
@@ -61,6 +60,41 @@
     </div>
   </div>
 
+  
+
+  <app-modal [(visible)]="modalVisible" [width]="'40vw'" header="Crear Cuenta">
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Cuenta</label>
+        <app-custom-input [placeholder]="'Ingrese el nombre de la cuenta...'" [type]="'text'"
+          [(ngModel)]="nombreCuenta" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cuenta</label>
+
+        <p-select [options]="tipos" [(ngModel)]="tipoCuenta" optionValue="value" checkmark="true" showClear="true"
+          placeholder="Seleccione el tipo de cuenta" optionLabel="name" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
+        <p-inputnumber
+          [(ngModel)]="balanceCuenta"
+          max="100000000000"
+          min="0" 
+        />
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-4">
+        <app-button icon="pi pi-check" label="{{ isEditMode ? 'Actualizar' : 'Registrar' }}" raised="true"
+          (click)="guardarCuenta()" />
+        <app-button icon="pi pi-times" label="Cancelar" raised="true" severity="danger" (click)="cancelar()" />
+      </div>
+    </div>
+  </app-modal>
+
   <div class="p-4">
     <p-card header="Transaction History" styleClass="shadow-lg rounded-xl max-w-md"
       [style]="{ width: '100%', maxWidth: '28rem' }">
@@ -84,33 +118,4 @@
       <p class="text-blue-600 text-sm mt-2 cursor-pointer">View all transactions</p>
     </p-card>
   </div>
-
-  <app-modal [(visible)]="modalVisible" [width]="'40vw'" header="Crear Cuenta">
-
-    <div class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Cuenta</label>
-        <app-custom-input [placeholder]="'Ingrese el nombre de la cuenta...'" [type]="'text'"
-          [(ngModel)]="nombreCuenta" />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cuenta</label>
-
-        <p-select [options]="tipos" [(ngModel)]="tipoCuenta" optionValue="value" checkmark="true" showClear="true"
-          placeholder="Seleccione el tipo de cuenta" optionLabel="name" />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
-        <app-custom-input [placeholder]="'Ingrese el balance...'" [type]="'number'" [(ngModel)]="balanceCuenta" />
-      </div>
-
-      <div class="flex justify-end space-x-3 pt-4">
-        <app-button icon="pi pi-check" label="{{ isEditMode ? 'Actualizar' : 'Registrar' }}" raised="true"
-          (click)="guardarCuenta()" />
-        <app-button icon="pi pi-times" label="Cancelar" raised="true" severity="danger" (click)="cancelar()" />
-      </div>
-    </div>
-  </app-modal>
 </div>

@@ -1,4 +1,4 @@
-import { Component,inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CarouselModule } from 'primeng/carousel';
 import { CardModule } from 'primeng/card';
@@ -9,24 +9,19 @@ import { Select } from 'primeng/select';
 import { CustomInputComponent } from '../../../shared/components/custom-input/custom-input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { FormsModule } from '@angular/forms';
-<<<<<<< HEAD
 import { StepsModule } from 'primeng/steps';
 import { TimelineModule } from 'primeng/timeline';
-=======
-import { PrimeIcons } from 'primeng/api';
-
->>>>>>> d53c66b030139596a5a63ed90f0bf60dd432d88c
+import { InputNumberModule } from 'primeng/inputnumber';
 interface TypeInterface {
   name: string;
   value: string;
 }
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, CarouselModule, CardModule,ModalComponent,
-    Select,CustomInputComponent,ButtonComponent,FormsModule,StepsModule,TimelineModule],
+  imports: [CommonModule, CarouselModule, CardModule, ModalComponent,
+    Select, CustomInputComponent, ButtonComponent, FormsModule, StepsModule, TimelineModule,InputNumberModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
-  providers: [PrimeIcons]
 })
 export class HomeComponent {
   cuentaService = inject(AccountService);
@@ -37,12 +32,12 @@ export class HomeComponent {
   totalIngresos: number = 0;
   totalGastos: number = 0;
   modalVisible = false;
-nombreCuenta = '';
-tipoCuenta = '';
-balanceCuenta: number | null = null;
-isEditMode = false;
-carouselResponsiveOptions: any[] | undefined;
-  
+  nombreCuenta = '';
+  tipoCuenta = '';
+  balanceCuenta: number | null = null;
+  isEditMode = false;
+  carouselResponsiveOptions: any[] | undefined;
+
   tipos: TypeInterface[] = [
     { name: 'Tarjeta de crédito', value: 'CREDIT_CARD' },
     { name: 'Tarjeta de débito', value: 'DEBIT_CARD' },
@@ -51,8 +46,8 @@ carouselResponsiveOptions: any[] | undefined;
   ];
   ngOnInit() {
     this.cuentaService.getAll().subscribe((res) => {
-     this.cuentas = res;
-     this.cuentasWithAddButton = [...this.cuentas, { isAddButton: true }];
+      this.cuentas = res;
+      this.cuentasWithAddButton = [...this.cuentas, { isAddButton: true }];
     });
 
     this.reportService.getReport().subscribe((report) => {
@@ -60,57 +55,80 @@ carouselResponsiveOptions: any[] | undefined;
       this.totalIngresos = report.incomes;
       this.totalGastos = report.expenses;
     });
- 
+
     this.carouselResponsiveOptions = [
       {
-          breakpoint: '1400px',
-          numVisible: 3,
-          numScroll: 1,
+        breakpoint: '1400px',
+        numVisible: 3,
+        numScroll: 1,
       },
       {
-          breakpoint: '1199px',
-          numVisible: 3,
-          numScroll: 1,
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 1,
       },
       {
         breakpoint: '771px',
         numVisible: 2,
         numScroll: 1,
-    },
-      {
-          breakpoint: '595px',
-          numVisible: 1,
-          numScroll: 1,
       },
-  ];
-}
+      {
+        breakpoint: '595px',
+        numVisible: 1,
+        numScroll: 1,
+      },
+    ];
 
-abrirModal() {
-  this.isEditMode = false;
-  this.nombreCuenta = '';
-  this.tipoCuenta = '';
-  this.balanceCuenta = null;
-  this.modalVisible = true;
-}
+    this.carouselResponsiveOptions = [
+      {
+        breakpoint: '1400px',
+        numVisible: 3,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1199px',
+        numVisible: 3,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '771px',
+        numVisible: 2,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '595px',
+        numVisible: 1,
+        numScroll: 1,
+      },
+    ];
+  }
 
-cancelar() {
-  this.modalVisible = false;
-}
+  abrirModal() {
+    this.isEditMode = false;
+    this.nombreCuenta = '';
+    this.tipoCuenta = '';
+    this.balanceCuenta = null;
+    this.modalVisible = true;
+  }
 
-guardarCuenta() {
-  const nuevaCuenta = {
-    name: this.nombreCuenta,
-    type: this.tipoCuenta,
-    balance: this.balanceCuenta
-  };
-
-  this.cuentaService.create(nuevaCuenta).subscribe(() => {
+  cancelar() {
     this.modalVisible = false;
-    this.ngOnInit(); // recargar lista
-  });
+  }
+
+  guardarCuenta() {
+    const nuevaCuenta = {
+      name: this.nombreCuenta,
+      type: this.tipoCuenta,
+      balance: this.balanceCuenta
+    };
+
+    this.cuentaService.create(nuevaCuenta).subscribe(() => {
+      this.modalVisible = false;
+      this.ngOnInit();
+    });
 
 
-}
+  }
   getTipoClass(tipo: string): string {
     switch (tipo) {
       case 'CREDIT_CARD':
@@ -125,5 +143,5 @@ guardarCuenta() {
         return '';
     }
   }
-  
+
 }
