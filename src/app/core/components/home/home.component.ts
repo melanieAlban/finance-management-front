@@ -12,6 +12,9 @@ import { FormsModule } from '@angular/forms';
 import { StepsModule } from 'primeng/steps';
 import { TimelineModule } from 'primeng/timeline';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { TransactionService } from '../../../services/transaction.service';
+import { TransactionComponent } from '../../../shared/components/transaction/transaction.component';
+
 interface TypeInterface {
   name: string;
   value: string;
@@ -19,12 +22,13 @@ interface TypeInterface {
 @Component({
   selector: 'app-home',
   imports: [CommonModule, CarouselModule, CardModule, ModalComponent,
-    Select, CustomInputComponent, ButtonComponent, FormsModule, StepsModule, TimelineModule,InputNumberModule],
+    Select, CustomInputComponent, ButtonComponent, FormsModule, StepsModule, TimelineModule, InputNumberModule, TransactionComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
   cuentaService = inject(AccountService);
+  transactionService = inject(TransactionService);
   reportService = inject(ReportService);
   cuentas: any[] = [];
   cuentasWithAddButton: any[] = [];
@@ -37,6 +41,7 @@ export class HomeComponent {
   balanceCuenta: number | null = null;
   isEditMode = false;
   carouselResponsiveOptions: any[] | undefined;
+  transactions: any[] = [];
 
   tipos: TypeInterface[] = [
     { name: 'Tarjeta de crédito', value: 'CREDIT_CARD' },
@@ -50,53 +55,38 @@ export class HomeComponent {
       this.cuentasWithAddButton = [...this.cuentas, { isAddButton: true }];
     });
 
+    this.transactionService.getAll().subscribe((res) => {
+      this.transactions = res.slice(0, 5);
+    });
+
     this.reportService.getReport().subscribe((report) => {
       this.totalCuentas = report.accounts;
       this.totalIngresos = report.incomes;
       this.totalGastos = report.expenses;
     });
-
     this.carouselResponsiveOptions = [
       {
+        breakpoint: '1675px',
+        numVisible: 5,
+        numScroll: 1,
+      },
+      {
         breakpoint: '1400px',
+        numVisible: 4,
+        numScroll: 1,
+      },
+      {
+        breakpoint: '1190px',
         numVisible: 3,
         numScroll: 1,
       },
       {
-        breakpoint: '1199px',
-        numVisible: 3,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '771px',
+        breakpoint: '944px',
         numVisible: 2,
         numScroll: 1,
       },
       {
-        breakpoint: '595px',
-        numVisible: 1,
-        numScroll: 1,
-      },
-    ];
-
-    this.carouselResponsiveOptions = [
-      {
-        breakpoint: '1400px',
-        numVisible: 3,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '1199px',
-        numVisible: 3,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '771px',
-        numVisible: 2,
-        numScroll: 1,
-      },
-      {
-        breakpoint: '595px',
+        breakpoint: '706px',
         numVisible: 1,
         numScroll: 1,
       },
