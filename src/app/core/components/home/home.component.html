@@ -1,12 +1,13 @@
 <div class="flex flex-wrap gap-4 p-4 home-container flex-col">
   <div class="flex flex-col" style="width: 100%;">
-    <p-carousel [value]="cuentas" [numVisible]="6" [numScroll]="1" [responsiveOptions]="carouselResponsiveOptions">
+    <p-carousel [value]="cuentas" [numVisible]="6" [numScroll]="1" [circular]="true" [responsiveOptions]="carouselResponsiveOptions">
       <ng-template #header>
         <app-button icon="pi pi-plus" label="Nueva Cuenta" raised="true" class="color-buton" (click)="abrirModal()" />
       </ng-template>
       <ng-template let-cuenta #item>
         <div
-          class="flex items-center justify-between p-3 m-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-56 h-24 bg-gradient-to-br from-white to-gray-50 text-gray-700">
+          class="flex items-center justify-between p-3 m-2 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 w-56 h-24 bg-gradient-to-br from-white to-gray-50 text-gray-700"
+          style="margin: 0 auto;">
           <div class="flex flex-col justify-between h-full">
             <div>
               <p class="text-sm font-semibold capitalize truncate max-w-[120px]">{{ cuenta.name }}</p>
@@ -35,7 +36,7 @@
     </p-carousel>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 pb-6">
-    <div class="flex items-center p-5 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl shadow-lg">
+    <div class="flex flex-col items-center p-5 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl shadow-lg">
       <i class="pi pi-credit-card text-3xl text-blue-700 mr-4"></i>
       <div>
         <p class="text-sm text-blue-700 font-medium">Total Cuentas</p>
@@ -43,7 +44,7 @@
       </div>
     </div>
 
-    <div class="flex items-center p-5 bg-gradient-to-br from-green-100 to-green-50 rounded-xl shadow-lg">
+    <div class="flex flex-col items-center p-5 bg-gradient-to-br from-green-100 to-green-50 rounded-xl shadow-lg">
       <i class="pi pi-arrow-down-right text-3xl text-green-700 mr-4"></i>
       <div>
         <p class="text-sm text-green-700 font-medium">Total Ingresos</p>
@@ -51,7 +52,7 @@
       </div>
     </div>
 
-    <div class="flex items-center p-5 bg-gradient-to-br from-red-100 to-red-50 rounded-xl shadow-lg">
+    <div class="flex flex-col items-center p-5 bg-gradient-to-br from-red-100 to-red-50 rounded-xl shadow-lg">
       <i class="pi pi-arrow-up-right text-3xl text-red-700 mr-4"></i>
       <div>
         <p class="text-sm text-red-700 font-medium">Total Gastos</p>
@@ -60,7 +61,7 @@
     </div>
   </div>
 
-  
+
 
   <app-modal [(visible)]="modalVisible" [width]="'40vw'" header="Crear Cuenta">
 
@@ -80,11 +81,7 @@
 
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
-        <p-inputnumber
-          [(ngModel)]="balanceCuenta"
-          max="100000000000"
-          min="0" 
-        />
+        <p-inputnumber [(ngModel)]="balanceCuenta" max="100000000000" min="0" />
       </div>
 
       <div class="flex justify-end space-x-3 pt-4">
@@ -95,27 +92,14 @@
     </div>
   </app-modal>
 
-  <div class="p-4">
-    <p-card header="Transaction History" styleClass="shadow-lg rounded-xl max-w-md"
-      [style]="{ width: '100%', maxWidth: '28rem' }">
-      <ng-template pTemplate="header">
-        <h3 class="text-lg font-semibold mb-4">Transaction History</h3>
-      </ng-template>
-      <p-timeline [value]="" align="left" styleClass="custom-timeline">
-        <ng-template pTemplate="marker" let-transaccion>
-          <i class="text-xl" [ngClass]=""></i>
-        </ng-template>
-        <ng-template pTemplate="content" let-transaccion>
-          <div>
-            <p class="text-sm font-medium">{{ transaccion.description }}</p>
-            <p class="text-xs text-gray-500">{{ transaccion.date }}</p>
-            <span class="text-sm font-bold ml-auto block mt-1" [ngClass]="">
-              {{ transaccion.amount >= 0 ? '+' : '' }}{{ transaccion.amount | currency: 'USD' }}
-            </span>
-          </div>
-        </ng-template>
-      </p-timeline>
-      <p class="text-blue-600 text-sm mt-2 cursor-pointer">View all transactions</p>
-    </p-card>
+  <div class="p-4 flex flex-row gap-12" style="width: 100%;">
+    <div class="flex flex-col gap-4">
+      <p-card header="Últimas transacciones" styleClass="shadow-lg rounded-xl max-w-md px-4 py-1"
+        [style]="{ width: '100%', maxWidth: '28rem' }">
+        <div class="flex flex-col gap-4">
+          <app-transaction *ngFor="let transaction of transactions" [transaction]="transaction"></app-transaction>
+        </div>
+      </p-card>
+    </div>
   </div>
 </div>
