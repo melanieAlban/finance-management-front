@@ -92,8 +92,9 @@
     </div>
   </app-modal>
 
-  <div class="p-4 flex flex-row gap-12" style="width: 100%;">
-    <div class="flex flex-col gap-4">
+  <div class="p-4 flex flex-row gap-4 w-full">
+   
+    <div class="flex flex-col gap-4 w-1/2">
       <p-card header="Últimas transacciones" styleClass="shadow-lg rounded-xl max-w-md px-4 py-1"
         [style]="{ width: '100%', maxWidth: '28rem' }">
         <div class="flex flex-col gap-4">
@@ -101,5 +102,13 @@
         </div>
       </p-card>
     </div>
+  
+    
+    <div class="flex-1">
+      <p-card header="Gastos vs Ingresos" styleClass="shadow-lg rounded-xl p-4">
+        <p-chart type="line" [data]="chartData" [options]="chartOptions" class="h-[30rem] w-full" />
+      </p-card>
+    </div>
   </div>
+  
 </div>
