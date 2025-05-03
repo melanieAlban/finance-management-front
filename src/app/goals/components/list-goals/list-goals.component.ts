@@ -255,6 +255,7 @@ export class ListGoalsComponent {
       currentBalance: 0,
       creationDate: new Date(),
     };
+    
     this.loadGoals();
   }
 
@@ -446,5 +447,6 @@ export class ListGoalsComponent {
     this.isEditing = false;
     this.formSubmitted = false;
     this.displayCreateGoalModal = true;
+    this.isEditing = false; 
   }
 }
