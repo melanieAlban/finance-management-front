@@ -28,6 +28,11 @@ interface CategoryInterface {
   value: string;
 }
 
+interface TransactionTypeInterface {
+  name: string;
+  value: 'INCOME' | 'EXPENSE';
+}
+
 @Component({
   selector: 'app-list-automation',
   imports: [
@@ -54,17 +59,19 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
   confirmModalVisible: boolean = false;
   isEditMode: boolean = false;
   idAutomationSeleccionada: number | null = null;
-  nameAutomation: string = ''; // Nuevo campo para el nombre
+  nameAutomation: string = '';
   amountAutomation: number = 0;
   frequencyAutomation: string = '';
   startDateAutomation: string = '';
   accountIdAutomation: number | null = null;
   categoryAutomation: string = '';
+  transactionType: 'INCOME' | 'EXPENSE' | '' = ''; // Nuevo campo para tipo de transacción
   filtroFrecuencia: string = '';
   filtroCategoria: string = '';
   severity: string = '';
   summary: string = '';
   detail: string = '';
+  confirmMessage: string = '';
   automationToDelete: Automation | null = null;
 
   automationService = inject(AutomationService);
@@ -84,6 +91,11 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
     { name: 'Vivienda', value: 'VIVIENDA' },
     { name: 'Entretenimiento', value: 'ENTRETENIMIENTO' },
     { name: 'Otros', value: 'OTROS' }
+  ];
+
+  transactionTypes: TransactionTypeInterface[] = [
+    { name: 'Ingreso', value: 'INCOME' },
+    { name: 'Egreso', value: 'EXPENSE' }
   ];
 
   constructor() {}
@@ -173,8 +185,9 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
     this.isEditMode = true;
     this.modalVisible = true;
     this.idAutomationSeleccionada = automation.id ?? null;
-    this.nameAutomation = automation.name || ''; // Cargar el nombre de la automatización
-    this.amountAutomation = automation.amount;
+    this.nameAutomation = automation.name || '';
+    this.amountAutomation = Math.abs(automation.amount); // Usar valor absoluto
+    this.transactionType = automation.amount > 0 ? 'INCOME' : 'EXPENSE'; // Determinar tipo
     this.frequencyAutomation = automation.frequency;
     this.startDateAutomation = automation.startDate ? new Date(automation.startDate).toISOString().split('T')[0] : '';
     this.accountIdAutomation = automation.accountId;
@@ -182,19 +195,22 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
   }
 
   guardarAutomation() {
-    if (!this.nameAutomation || !this.amountAutomation || !this.frequencyAutomation || !this.startDateAutomation || !this.accountIdAutomation || !this.categoryAutomation) {
+    if (!this.nameAutomation || !this.amountAutomation || !this.transactionType || !this.frequencyAutomation || !this.startDateAutomation || !this.accountIdAutomation || !this.categoryAutomation) {
       this.severity = 'error';
       this.summary = 'Error';
       this.detail = 'Todos los campos obligatorios deben estar completos.';
       return;
     }
 
+    // Convertir monto según el tipo de transacción
+    const finalAmount = this.transactionType === 'INCOME' ? this.amountAutomation : -this.amountAutomation;
+
     const automation: Automation = {
       id: this.idAutomationSeleccionada ?? undefined,
-      name: this.nameAutomation,  // Incluir el nombre
-      amount: this.amountAutomation,
+      name: this.nameAutomation,
+      amount: finalAmount,
       frequency: this.frequencyAutomation as 'DAILY' | 'WEEKLY' | 'MONTHLY',
-      startDate: this.startDateAutomation, 
+      startDate: this.startDateAutomation,
       accountId: this.accountIdAutomation,
       category: this.categoryAutomation
     };
@@ -243,9 +259,10 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
   confirmarEliminacion(automation: Automation) {
     this.automationToDelete = automation;
     this.confirmModalVisible = true;
-    this.severity = 'warn';
-    this.summary = 'Confirmar Eliminación';
-    this.detail = `¿Está seguro que desea eliminar la automatización con nombre ${automation.name}?`;
+    this.confirmMessage = `¿Está seguro que desea eliminar la automatización con nombre ${automation.name}?`;
+    this.severity = '';
+    this.summary = '';
+    this.detail = '';
   }
 
   eliminarAutomation() {
@@ -272,6 +289,7 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
   cerrarConfirmacion() {
     this.confirmModalVisible = false;
     this.automationToDelete = null;
+    this.confirmMessage = '';
   }
 
   cancelar() {
@@ -281,8 +299,9 @@ export class ListAutomationComponent implements OnInit, OnDestroy {
 
   resetForm() {
     this.idAutomationSeleccionada = null;
-    this.nameAutomation = '';  // Resetear el nombre
+    this.nameAutomation = '';
     this.amountAutomation = 0;
+    this.transactionType = ''; // Resetear tipo de transacción
     this.frequencyAutomation = '';
     this.startDateAutomation = '';
     this.accountIdAutomation = null;
