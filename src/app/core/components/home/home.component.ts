@@ -9,6 +9,7 @@ import { Select } from 'primeng/select';
 import { CustomInputComponent } from '../../../shared/components/custom-input/custom-input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { FormsModule } from '@angular/forms';
+import { PrimeIcons } from 'primeng/api';
 
 interface TypeInterface {
   name: string;
@@ -18,7 +19,8 @@ interface TypeInterface {
   selector: 'app-home',
   imports: [CommonModule, CarouselModule, CardModule,ModalComponent,Select,CustomInputComponent,ButtonComponent,FormsModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
+  providers: [PrimeIcons]
 })
 export class HomeComponent {
   cuentaService = inject(AccountService);
@@ -33,6 +35,7 @@ nombreCuenta = '';
 tipoCuenta = '';
 balanceCuenta: number | null = null;
 isEditMode = false;
+carouselResponsiveOptions: any[] | undefined;
   
   tipos: TypeInterface[] = [
     { name: 'Tarjeta de crédito', value: 'CREDIT_CARD' },
@@ -52,6 +55,28 @@ isEditMode = false;
       this.totalGastos = report.expenses;
     });
  
+    this.carouselResponsiveOptions = [
+      {
+          breakpoint: '1400px',
+          numVisible: 3,
+          numScroll: 1,
+      },
+      {
+          breakpoint: '1199px',
+          numVisible: 3,
+          numScroll: 1,
+      },
+      {
+        breakpoint: '771px',
+        numVisible: 2,
+        numScroll: 1,
+    },
+      {
+          breakpoint: '595px',
+          numVisible: 1,
+          numScroll: 1,
+      },
+  ];
 }
 
 abrirModal() {
@@ -77,6 +102,8 @@ guardarCuenta() {
     this.modalVisible = false;
     this.ngOnInit(); // recargar lista
   });
+
+
 }
   getTipoClass(tipo: string): string {
     switch (tipo) {
@@ -92,6 +119,5 @@ guardarCuenta() {
         return '';
     }
   }
-  
   
 }
