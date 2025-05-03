@@ -59,12 +59,7 @@
         label="Agregar Fondos"
         (click)="selectGoal(goal)"
       ></p-button>
-      <p-button
-        styleClass="w-80 boton-negro"
-        icon="pi pi-cog"
-        label="Editar Frecuencia"
-        (click)="displayEditFrequencyModal = true"
-      ></p-button>
+    
     </div>
   </p-card>
   <p-menu
@@ -220,17 +215,17 @@
   [closable]="true"
   [dismissableMask]="true"
   [showHeader]="true"
-  header="Agregar Abono 💸"
+  header="Agregar Abono "
 >
   <form>
     <div
-      class="p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg"
+      class="p-6 bg-gradient-to-br from-blue-50 via-blue-100 to-indigo-50 rounded-xl shadow-2xl border border-gray-100 transform transition-all duration-300 hover:shadow-xl"
     >
-      <div class="space-y-4">
+      <div class="space-y-6">
         <div>
           <label
             for="paymentAmount"
-            class="block text-sm font-medium text-gray-700 mb-1"
+            class="block text-sm font-semibold text-gray-800 mb-2 uppercase tracking-wide"
             >Monto a Abonar ($)</label
           >
           <input
@@ -239,13 +234,13 @@
             type="number"
             pInputText
             [(ngModel)]="paymentAmount"
-            class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 text-center text-lg font-semibold"
+            class="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all duration-300 text-center text-xl font-extrabold text-gray-900 bg-white placeholder-gray-400 shadow-inner"
             placeholder="Ej. 100"
             min="1"
           />
         </div>
       </div>
-      <div class="mt-6 flex justify-end gap-3">
+      <div class="mt-8 flex justify-end gap-4">
         <p-button
           label="Cancelar"
           styleClass="boton-cancelar"
@@ -255,64 +250,6 @@
           label="Confirmar Abono"
           styleClass="boton-crear"
           (click)="addPayment()"
-        ></p-button>
-      </div>
-    </div>
-  </form>
-</p-dialog>
-
-<p-dialog
-  [(visible)]="displayEditFrequencyModal"
-  [modal]="true"
-  [style]="{ width: '500px', height: '350px' }"
-  styleClass="edit-frequency-modal"
-  [draggable]="false"
-  [closable]="true"
-  [dismissableMask]="true"
-  [showHeader]="true"
-  header="Editar Frecuencia ⚙️"
->
-  <form>
-    <div
-      class="flex flex-col h-full p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg shadow-lg"
-    >
-      <div class="flex-1 space-y-3">
-        <div>
-          <label
-            for="editFrequency"
-            class="block text-sm font-medium text-gray-700 mb-1"
-            >Frecuencia de Abono</label
-          >
-          <div class="flex gap-3">
-            <p-dropdown
-              id="editFrequency"
-              name="editFrequency"
-              [(ngModel)]="selectedFrequency"
-              [options]="editFrequencies"
-              placeholder="Selecciona una frecuencia"
-              styleClass="w-full rounded-lg"
-            ></p-dropdown>
-            <input
-              type="text"
-              pInputText
-              [value]="editSuggestedAmount"
-              class="w-32 p-2 border border-gray-300 rounded-lg text-center font-semibold text-gray-600"
-              placeholder="$0.00"
-              disabled
-            />
-          </div>
-        </div>
-      </div>
-      <div class="mt-4 flex justify-end gap-3">
-        <p-button
-          label="Cancelar"
-          styleClass="boton-cancelar"
-          (click)="displayEditFrequencyModal = false"
-        ></p-button>
-        <p-button
-          label="Confirmar"
-          styleClass="boton-crear"
-          (click)="displayEditFrequencyModal = false"
         ></p-button>
       </div>
     </div>

@@ -9,14 +9,16 @@ import { Select } from 'primeng/select';
 import { CustomInputComponent } from '../../../shared/components/custom-input/custom-input.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { FormsModule } from '@angular/forms';
-
+import { StepsModule } from 'primeng/steps';
+import { TimelineModule } from 'primeng/timeline';
 interface TypeInterface {
   name: string;
   value: string;
 }
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, CarouselModule, CardModule,ModalComponent,Select,CustomInputComponent,ButtonComponent,FormsModule],
+  imports: [CommonModule, CarouselModule, CardModule,ModalComponent,
+    Select,CustomInputComponent,ButtonComponent,FormsModule,StepsModule,TimelineModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

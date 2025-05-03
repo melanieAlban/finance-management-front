@@ -50,7 +50,7 @@
     </button>
   </div>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 pb-6">
-    <!-- Total Cuentas -->
+   
     <div class="flex items-center p-5 bg-gradient-to-br from-blue-100 to-blue-50 rounded-xl shadow-lg">
       <i class="pi pi-credit-card text-3xl text-blue-700 mr-4"></i>
       <div>
@@ -59,7 +59,6 @@
       </div>
     </div>
   
-    <!-- Total Ingresos -->
     <div class="flex items-center p-5 bg-gradient-to-br from-green-100 to-green-50 rounded-xl shadow-lg">
       <i class="pi pi-arrow-down-right text-3xl text-green-700 mr-4"></i>
       <div>
@@ -68,7 +67,6 @@
       </div>
     </div>
   
-    <!-- Total Gastos -->
     <div class="flex items-center p-5 bg-gradient-to-br from-red-100 to-red-50 rounded-xl shadow-lg">
       <i class="pi pi-arrow-up-right text-3xl text-red-700 mr-4"></i>
       <div>
@@ -76,6 +74,37 @@
         <p class="text-xl font-bold text-red-900">${{ totalIngresos | number: '1.2-2' }}</p>
       </div>
     </div>
+  </div>
+
+  <div class="p-4">
+    <p-card header="Transaction History" styleClass="shadow-lg rounded-xl max-w-md" [style]="{ width: '100%', maxWidth: '28rem' }">
+      <ng-template pTemplate="header">
+        <h3 class="text-lg font-semibold mb-4">Transaction History</h3>
+      </ng-template>
+      <p-timeline
+        [value]=""
+        align="left"
+        styleClass="custom-timeline"
+      >
+        <ng-template pTemplate="marker" let-transaccion>
+          <i
+            
+            class="text-xl"
+            [ngClass]=""
+          ></i>
+        </ng-template>
+        <ng-template pTemplate="content" let-transaccion>
+          <div>
+            <p class="text-sm font-medium">{{ transaccion.description }}</p>
+            <p class="text-xs text-gray-500">{{ transaccion.date }}</p>
+            <span class="text-sm font-bold ml-auto block mt-1" [ngClass]="">
+              {{ transaccion.amount >= 0 ? '+' : '' }}{{ transaccion.amount | currency: 'USD' }}
+            </span>
+          </div>
+        </ng-template>
+      </p-timeline>
+      <p class="text-blue-600 text-sm mt-2 cursor-pointer">View all transactions</p>
+    </p-card>
   </div>
 
   <app-modal

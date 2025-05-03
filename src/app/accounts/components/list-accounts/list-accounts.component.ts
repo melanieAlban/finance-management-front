@@ -13,7 +13,7 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TransactionService } from '../../../services/transaction.service';
-
+import { InputNumberModule } from 'primeng/inputnumber';
 
 interface TypeInterface {
   name: string;
@@ -27,7 +27,8 @@ interface BalancePorTipo {
 }
 @Component({
   selector: 'app-list-accounts',
-  imports: [ButtonComponent, CustomInputComponent, CardComponent, KnobModule, ModalComponent, FormsModule, CommonModule, SelectModule, ToastComponent],
+  imports: [ButtonComponent, CustomInputComponent, CardComponent, KnobModule, 
+    ModalComponent, FormsModule, CommonModule, SelectModule, ToastComponent, InputNumberModule],
   templateUrl: './list-accounts.component.html',
   styleUrl: './list-accounts.component.css'
 })
