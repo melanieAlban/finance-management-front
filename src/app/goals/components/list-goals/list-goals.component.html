@@ -18,17 +18,30 @@
     *ngFor="let goal of goals"
     class="shadow-2xl relative shadow-lg border border-gray-200"
   >
-    <div class="absolute top-2 right-2 elipsis flex items-center gap-2">
-      <div class="flex items-center text-base text-gray-600">
-        <span class="mr-1">🔥</span>
-        <span>{{ goal.currentStreak || 0 }} días</span>
-      </div>
-      <p-button
-        icon="pi pi-ellipsis-v"
-        styleClass="puntitos"
-        (click)="openMenu($event, goal)"
-      ></p-button>
+  <div class="absolute top-2 right-2 flex items-center gap-4">
+    <div class="flex items-center text-base text-gray-600 gap-1">
+      <span>🔥</span>
+      <span>{{ goal.currentStreak || 0 }} días</span>
     </div>
+  
+    <span
+      class="text-xs font-semibold px-2 py-1 rounded-full"
+      [ngClass]="{
+        'bg-green-100 text-green-700': goal.goalStatus === 'ACTIVE',
+        'bg-yellow-100 text-yellow-800': goal.goalStatus === 'COMPLETED',
+        'bg-red-100 text-red-700': goal.goalStatus === 'EXPIRED'
+      }"
+    >
+      {{ goal.goalStatus }}
+    </span>
+  
+    <p-button
+      icon="pi pi-ellipsis-v"
+      styleClass="puntitos"
+      (click)="openMenu($event, goal)"
+    ></p-button>
+  </div>
+  
 
     <h2 class="mb-10 font-extrabold">{{ goal.name }}</h2>
     <div class="text-sm text-gray-600 mb-8">
