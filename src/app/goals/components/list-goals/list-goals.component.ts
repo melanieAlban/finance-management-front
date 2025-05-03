@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject,ViewChild } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { MenuModule } from 'primeng/menu';
@@ -26,14 +26,14 @@ interface Goal {
   targetAmount: number | null;
   deadline: Date | null;
   depositFrequency: string | null;
-  lastDepositDate: Date | null; 
+  lastDepositDate: Date | null;
   currentBalance?: number | null; // Añadido para el saldo actual
   creationDate?: Date | null; // Añadido para la fecha de creación
 }
 @Component({
   selector: 'app-list-goals',
-  imports: [CardModule,ProgressBarModule,ButtonModule,CommonModule,MenuModule,DialogModule,DropdownModule,
-    CalendarModule,CheckboxModule,ToastModule,FormsModule,ConfirmDialogModule],
+  imports: [CardModule, ProgressBarModule, ButtonModule, CommonModule, MenuModule, DialogModule, DropdownModule,
+    CalendarModule, CheckboxModule, ToastModule, FormsModule, ConfirmDialogModule],
   providers: [MessageService, ConfirmationService],
   templateUrl: './list-goals.component.html',
   styleUrl: './list-goals.component.css'
@@ -41,9 +41,9 @@ interface Goal {
 export class ListGoalsComponent {
   @ViewChild('menu') menu: any;
   goals: any[] = [];
-  currentGoal: any = null; 
+  currentGoal: any = null;
   progressValue: number = 0;
-  GoalsService= inject(GoalsService);
+  GoalsService = inject(GoalsService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
   displayCreateGoalModal: boolean = false;
@@ -52,18 +52,23 @@ export class ListGoalsComponent {
   formSubmitted: boolean = false;
   suggestedAmount: number = 0;
   isEditing: boolean = false;
-  constructor(){
+  selectedFrequency: string | null = null;
+  editSuggestedAmount: string = '$0.00';
+  today: Date = new Date();
+
+  constructor() {
     this.loadGoals();
   }
+
   menuItems: MenuItem[] = [
     {
       label: 'Editar',
       icon: 'pi pi-pencil',
       styleClass: 'edit-item',
       command: () => {
-        this.editGoal(this.currentGoal); 
+        this.editGoal(this.currentGoal);
       },
-      
+
     },
     {
       label: 'Eliminar',
@@ -74,6 +79,7 @@ export class ListGoalsComponent {
       },
     },
   ];
+
   newGoal: Goal = {
     name: '',
     targetAmount: null,
@@ -102,17 +108,18 @@ export class ListGoalsComponent {
 
   // Lista de frecuencias para el dropdown de edición
   editFrequencies: Frequency[] = [
-    { label: 'Diariamente', value: 'DAILY' },
-    { label: 'Semanalmente', value: 'WEEKLY' },
-    { label: 'Mensualmente', value: 'MONTHLY' },
+    { label: 'Diario', value: 'DAILY' },
+    { label: 'Semanal', value: 'WEEKLY' },
+    { label: 'Mensual', value: 'MONTHLY' },
   ];
+
   loadGoals(): void {
     this.GoalsService.getAll().subscribe({
       next: (res) => {
         this.goals = res;
         if (res && res.length > 0) {
           this.goals.forEach((goal) => this.calculateProgressForGoal(goal));
-          this.currentGoal = res[0]; 
+          this.currentGoal = res[0];
           this.calculateProgress();
         } else {
           this.currentGoal = null;
@@ -135,40 +142,35 @@ export class ListGoalsComponent {
       },
     });
   }
+
   calculateProgress(): void {
     if (this.currentGoal && this.currentGoal.targetAmount && this.currentGoal.currentBalance) {
       // Calcular el porcentaje de progreso
       const progress = (this.currentGoal.currentBalance / this.currentGoal.targetAmount) * 100;
-  
+
       // Redondear el progreso a un valor entero sin decimales
       this.progressValue = Math.floor(progress); // Eliminar decimales
     } else {
       this.progressValue = 0;
     }
   }
-  
- 
-  selectedFrequency: string | null = null;
-  
-  editSuggestedAmount: string = '$0.00';
- 
-  today: Date = new Date();
+
   showCreateGoalModal() {
     this.displayCreateGoalModal = true;
-    
   }
-  
- 
+
   hideCreateGoalModal() {
     this.displayCreateGoalModal = false;
-    
   }
+
   openAddPaymentModal() {
     this.displayAddPaymentModal = true;
   }
+
   closeAddPaymentModal() {
     this.displayAddPaymentModal = false;
   }
+
   openEditFrequencyModal() {
     this.displayEditFrequencyModal = true;
     this.selectedFrequency = null;
@@ -177,7 +179,6 @@ export class ListGoalsComponent {
 
   saveGoal() {
     this.formSubmitted = true;
-  
     if (
       this.newGoal.name &&
       this.newGoal.targetAmount !== null &&
@@ -190,7 +191,7 @@ export class ListGoalsComponent {
         lastDepositDate: this.newGoal.lastDepositDate.toISOString(),
         deadline: this.newGoal.deadline.toISOString(),
       };
-  
+
       if (this.isEditing) {
         this.GoalsService.update(formattedGoal).subscribe({
           next: () => {
@@ -213,7 +214,7 @@ export class ListGoalsComponent {
         const creationDate = new Date();
         formattedGoal.creationDate = creationDate;
         formattedGoal.currentBalance = this.newGoal.currentBalance || 0;
-  
+
         this.GoalsService.create(formattedGoal).subscribe({
           next: () => {
             this.messageService.add({
@@ -240,6 +241,7 @@ export class ListGoalsComponent {
       });
     }
   }
+
   resetModal() {
     this.displayCreateGoalModal = false;
     this.isEditing = false;
@@ -256,7 +258,7 @@ export class ListGoalsComponent {
     
     this.loadGoals();
   }
-  
+
   calculateSuggestedAmount() {
     if (!this.newGoal.targetAmount || !this.newGoal.deadline) {
       this.suggestedAmount = 0;
@@ -281,11 +283,12 @@ export class ListGoalsComponent {
       case 'MONTHLY':
         amountPerFrequency = totalAmount / (daysToGo / 30);
         break;
-        
+
     }
     this.suggestedAmount = parseFloat(amountPerFrequency.toFixed(2));
-   
+
   }
+
   ngOnChanges() {
     this.calculateSuggestedAmount();
   }
@@ -294,19 +297,20 @@ export class ListGoalsComponent {
   onFrequencyChange() {
     this.calculateSuggestedAmount();
   }
+
   calculateSuggestedAmountForGoal(goal: any): string {
     if (!goal.targetAmount || !goal.deadline || !goal.depositFrequency) {
       return '$0.00';
     }
-  
+
     const totalAmount = goal.targetAmount;
     const deadline = new Date(goal.deadline);
     const today = new Date();
     const timeDiff = deadline.getTime() - today.getTime();
     const daysToGo = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Días hasta la fecha límite
-  
+
     let amountPerFrequency: number = 0;
-  
+
     switch (goal.depositFrequency) {
       case 'DAILY':
         amountPerFrequency = totalAmount / daysToGo;
@@ -320,22 +324,24 @@ export class ListGoalsComponent {
       default:
         return '$0.00';
     }
-  
+
     return `$${amountPerFrequency.toFixed(2)}`;
   }
+
   editGoal(goal: any) {
     this.isEditing = true;
-  this.formSubmitted = false;
+    this.formSubmitted = false;
 
-  const parsedGoal = {
-    ...goal,
-    deadline: goal.deadline instanceof Date ? goal.deadline : new Date(goal.deadline),
-    lastDepositDate: goal.lastDepositDate instanceof Date ? goal.lastDepositDate : new Date(goal.lastDepositDate),
-  };
+    const parsedGoal = {
+      ...goal,
+      deadline: goal.deadline instanceof Date ? goal.deadline : new Date(goal.deadline),
+      lastDepositDate: goal.lastDepositDate instanceof Date ? goal.lastDepositDate : new Date(goal.lastDepositDate),
+    };
 
-  this.newGoal = parsedGoal;
-  this.displayCreateGoalModal = true;
+    this.newGoal = parsedGoal;
+    this.displayCreateGoalModal = true;
   }
+
   confirmDelete(goal: any) {
     console.log("Confirm Delete called", goal);
     this.confirmationService.confirm({
@@ -366,12 +372,13 @@ export class ListGoalsComponent {
       }
     });
   }
+
   openMenu(event: Event, goal: any): void {
     console.log('Abriendo menú para meta:', goal); // Depuración
     this.currentGoal = goal; // Asignar la meta seleccionada
     this.menu.toggle(event); // Abrir el menú contextual
   }
-  
+
   addPayment() {
     if (this.paymentAmount && this.paymentAmount > 0 && this.currentGoal) {
       // Incrementar el saldo actual de la meta seleccionada
@@ -379,7 +386,7 @@ export class ListGoalsComponent {
       this.currentGoal.lastDepositDate = new Date();
       // Recalcular el progreso solo para esta meta
       this.calculateProgressForGoal(this.currentGoal);
-  
+
       // Llamar al servicio para actualizar el saldo de la meta
       this.GoalsService.update(this.currentGoal).subscribe({
         next: () => {
@@ -407,12 +414,13 @@ export class ListGoalsComponent {
       });
     }
   }
+
   selectGoal(goal: any): void {
     this.currentGoal = goal; // Asignamos la meta seleccionada a currentGoal
     this.calculateProgressForGoal(goal); // Recalcular el progreso de esa meta, si es necesario
     this.displayAddPaymentModal = true; // Mostrar el modal de agregar fondos
   }
-  
+
   calculateProgressForGoal(goal: any): void {
     if (goal && goal.targetAmount && goal.currentBalance >= 0) {
       const progress = (goal.currentBalance / goal.targetAmount) * 100;
@@ -421,8 +429,9 @@ export class ListGoalsComponent {
       goal.progressValue = 0;
     }
   }
-  
+
   openCreateGoalModal(): void {
+    this.resetModal();
     this.newGoal = {
       name: '',
       targetAmount: null,
@@ -430,16 +439,14 @@ export class ListGoalsComponent {
       deadline: null,
       lastDepositDate: new Date(),
       creationDate: null,
-  
+
       depositFrequency: null,
-      
-      
+
+
     };
-   
+    this.isEditing = false;
     this.formSubmitted = false;
     this.displayCreateGoalModal = true;
     this.isEditing = false; 
   }
-  
-
 }

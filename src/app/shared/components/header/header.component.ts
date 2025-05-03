@@ -18,7 +18,14 @@ import { TextareaModule } from 'primeng/textarea';
 import { IftaLabelModule } from 'primeng/iftalabel';
 import { TransactionService } from '../../../services/transaction.service';
 import { AuthService } from '../../../services/auth.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
+interface Categoria {
+  label: string;
+  value: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-header',
@@ -32,13 +39,15 @@ import { AuthService } from '../../../services/auth.service';
     MenuModule,
     CommonModule,
     ModalComponent,
-    DialogModule,
+    DialogModule, ToastModule,
     CalendarModule,
     DropdownModule,
     MultiSelectModule,
     MessageModule, InputNumber, InputTextModule, TextareaModule, IftaLabelModule
   ],
+  providers: [MessageService]
 })
+
 export class HeaderComponent {
   display = false;
   selectedType: string = 'Gasto';
@@ -46,13 +55,14 @@ export class HeaderComponent {
   monto: number | null = null;
   cuentaSeleccionada: string | null = null;
   divisaSeleccionada: string = 'USD';
-  categoriaSeleccionada: string | null = null;
+  categoriaSeleccionada: Categoria | null = null;
   fecha: string | null = null;
   cuentas: any[] = [];
   descripcion: string | null = null;
   cuentaOrigen: string | null = null;
   cuentaDestino: string | null = null;
-  
+  messageService = inject(MessageService);
+
   constructor() {
     this.obtenerCuentas();
   }
@@ -66,7 +76,16 @@ export class HeaderComponent {
       next: (res) => {
         this.cuentas = res;
       },
-      error: (err) => console.error('Error al obtener cuentas:', err)
+      error: (err) => {
+        console.error('Error al obtener cuentas:', err);
+      
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar las cuentas',
+          life: 5000
+        });
+      }
     });
   }
   cambiarTipo(tipo: string) {
@@ -75,10 +94,13 @@ export class HeaderComponent {
   }
 
   categorias = [
-    { label: 'Comida', value: 'comida', icon: 'pi pi-shopping-cart' },
-    { label: 'Transporte', value: 'transporte', icon: 'pi pi-car' },
-    { label: 'Salud', value: 'salud', icon: 'pi pi-heart' },
-    { label: 'Sueldo', value: 'sueldo', icon: 'pi pi-wallet' },
+    { label: 'Comida', value: 'COMIDA', icon: 'pi pi-shopping-cart' },
+    { label: 'Transporte', value: 'TRANSPORTE', icon: 'pi pi-car' },
+    { label: 'Salud', value: 'SALUD', icon: 'pi pi-heart' },
+    { label: 'Sueldo', value: 'SUELDO', icon: 'pi pi-wallet' },
+    { label: 'Vivienda', value: 'VIVIENDA', icon: 'pi pi-home' },
+    { label: 'Entretenimiento', value: 'ENTRETENIMIENTO', icon: 'pi pi-video' },
+    { label: 'Otros', value: 'OTROS', icon: 'pi pi-box' },
   ];
 
   etiquetas = [
@@ -100,15 +122,15 @@ export class HeaderComponent {
       this.categoriaSeleccionada &&
       this.fecha
     ) {
-      
+
 
       const registro = {
         type: this.selectedType,
         amount: this.monto,
-        accountId: this.cuentaSeleccionada, 
+        accountId: this.cuentaSeleccionada,
         date: this.fecha,
         description: this.descripcion,
-        categoria: this.categoriaSeleccionada,
+        category: this.categoriaSeleccionada.value,
       };
 
       console.log('Enviando a backend:', registro);
@@ -117,6 +139,7 @@ export class HeaderComponent {
         next: (res) => {
           console.log('Registro guardado:', res);
           this.resetCampos();
+          this.display = false;
         },
         error: (err) => {
           console.error('Error al guardar el registro:', err);

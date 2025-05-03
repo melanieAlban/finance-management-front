@@ -15,10 +15,10 @@ import { takeUntil } from 'rxjs/operators';
 import { TransactionService } from '../../../services/transaction.service';
 
 
- interface TypeInterface {
- name: string;
+interface TypeInterface {
+  name: string;
   value: string;
-  
+
 
 }
 interface BalancePorTipo {
@@ -27,18 +27,17 @@ interface BalancePorTipo {
 }
 @Component({
   selector: 'app-list-accounts',
-  imports: [ButtonComponent,CustomInputComponent,CardComponent,KnobModule,ModalComponent,FormsModule,CommonModule,SelectModule,ToastComponent],
+  imports: [ButtonComponent, CustomInputComponent, CardComponent, KnobModule, ModalComponent, FormsModule, CommonModule, SelectModule, ToastComponent],
   templateUrl: './list-accounts.component.html',
   styleUrl: './list-accounts.component.css'
 })
 export class ListAccountsComponent {
- 
 
   private destroy$ = new Subject<void>();
-  
+
   cuentas: any[] = [];
   balancesPorTipo: BalancePorTipo[] = [];
-  AccountService= inject(AccountService);
+  AccountService = inject(AccountService);
   TransactionService = inject(TransactionService);
   modalVisible: boolean = false;
   nombreCuenta: string = '';
@@ -50,8 +49,8 @@ export class ListAccountsComponent {
   severity: string = '';
   summary: string = '';
   detail: string = '';
-  cuentaAEliminar: any = null; 
-  isConfirming: boolean = false; 
+  cuentaAEliminar: any = null;
+  isConfirming: boolean = false;
   nombreBusqueda: string = '';
   constructor() {
     this.obtenerCuentas();
@@ -60,7 +59,7 @@ export class ListAccountsComponent {
     this.TransactionService.transactionsUpdated$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.obtenerCuentas(); 
+        this.obtenerCuentas();
       });
   }
 
@@ -68,17 +67,17 @@ export class ListAccountsComponent {
     this.destroy$.next();
     this.destroy$.complete();
   }
-  
+
   showConfirm(cuenta: any) {
     this.cuentaAEliminar = cuenta;
-    this.isConfirming = true; 
+    this.isConfirming = true;
     this.severity = 'warn';
     this.summary = '¿Está seguro que desea eliminar esta cuenta?';
     this.detail = `Cuenta: ${cuenta.name}`;
   }
 
-  tipos:TypeInterface[] = [
-    { name: 'Tarjeta de crédito', value: 'CREDIT_CARD' }, 
+  tipos: TypeInterface[] = [
+    { name: 'Tarjeta de crédito', value: 'CREDIT_CARD' },
     { name: 'Tarjeta de débito', value: 'DEBIT_CARD' },
     { name: 'Cuenta bancaria', value: 'BANK_ACCOUNT' },
     { name: 'Efectivo', value: 'CASH' }
@@ -89,7 +88,7 @@ export class ListAccountsComponent {
   obtenerTotalBalance() {
     this.AccountService.getTotalBalance().subscribe({
       next: (res) => {
-        this.totalBalance = res; 
+        this.totalBalance = res;
       },
       error: (err) => console.error('Error al obtener total balance:', err)
     });
@@ -105,15 +104,15 @@ export class ListAccountsComponent {
   getTipoClass(tipo: string) {
     switch (tipo) {
       case 'CREDIT_CARD':
-        return 'bg-blue-100 text-blue-800'; 
+        return 'bg-blue-100 text-blue-800';
       case 'DEBIT_CARD':
-        return 'bg-green-100 text-green-800';  
+        return 'bg-green-100 text-green-800';
       case 'BANK_ACCOUNT':
-        return 'bg-purple-100 text-purple-800';  
+        return 'bg-purple-100 text-purple-800';
       case 'CASH':
-        return 'bg-yellow-100 text-yellow-800'; 
+        return 'bg-yellow-100 text-yellow-800';
       default:
-        return '';  
+        return '';
     }
   }
 
@@ -128,15 +127,14 @@ export class ListAccountsComponent {
   }
 
   getTypeName(tipo: string): string {
-    return this.tipos.find(t => t.value === tipo)?.name! ;
-    
+    return this.tipos.find(t => t.value === tipo)?.name!;
+
   }
 
   get cuentasFiltradas() {
     if (!this.filtroTipo) return this.cuentas;
     return this.cuentas.filter(c => c.type === this.filtroTipo);
   }
-  
 
   editarCuenta(cuenta: any) {
     this.isEditMode = true;
@@ -146,7 +144,6 @@ export class ListAccountsComponent {
     this.tipoCuenta = cuenta.type;
     this.balanceCuenta = cuenta.balance;
   }
-  
 
   guardarCuenta() {
     const nuevaCuenta = {
@@ -166,13 +163,14 @@ export class ListAccountsComponent {
           this.obtenerCuentas();
           this.resetForm();
         },
-        error: (err) => {console.error('Error al actualizar cuenta:', err)
-            
-            this.severity = 'error';
-            this.summary = 'Error';
-            this.detail = 'No se pudo actualizar la cuenta. Inténtelo nuevamente.';
+        error: (err) => {
+          console.error('Error al actualizar cuenta:', err)
+
+          this.severity = 'error';
+          this.summary = 'Error';
+          this.detail = 'No se pudo actualizar la cuenta. Inténtelo nuevamente.';
         }
-        
+
       });
     } else {
       this.AccountService.create(nuevaCuenta).subscribe({
@@ -184,17 +182,16 @@ export class ListAccountsComponent {
           this.obtenerCuentas();
           this.resetForm();
         },
-        error: (err) => {console.error('Error al crear cuenta:', err)
-              
-              this.severity = 'error';
-              this.summary = 'Error';
-              this.detail = 'No se pudo crear la cuenta. Inténtelo nuevamente.';
+        error: (err) => {
+          console.error('Error al crear cuenta:', err)
+
+          this.severity = 'error';
+          this.summary = 'Error';
+          this.detail = 'No se pudo crear la cuenta. Inténtelo nuevamente.';
         }
       });
     }
-  
     this.modalVisible = false;
-    
   }
 
   eliminarCuenta(cuenta: any) {
@@ -202,7 +199,7 @@ export class ListAccountsComponent {
       this.AccountService.delete(cuenta.id).subscribe({
         next: () => {
           console.log('Cuenta eliminada con éxito');
-          this.obtenerCuentas(); 
+          this.obtenerCuentas();
           this.severity = 'success';
           this.summary = 'Cuenta eliminada';
           this.detail = `La cuenta "${cuenta.name}" fue eliminada con éxito.`;
@@ -216,6 +213,7 @@ export class ListAccountsComponent {
       });
     }
   }
+
   getAllByName(name: string) {
     this.AccountService.getAllByName(name).subscribe({
       next: (res) => {
@@ -229,27 +227,32 @@ export class ListAccountsComponent {
       }
     });
   }
+
   buscarCuentasPorNombre(nombre: string) {
-    this.nombreBusqueda = nombre; 
+    this.nombreBusqueda = nombre;
     if (nombre) {
       this.getAllByName(nombre);
     } else {
       this.obtenerCuentas();
     }
   }
-  
+
   cancelar() {
     this.modalVisible = false;
-    this.resetForm(); 
+    this.resetForm();
   }
 
   resetForm() {
     this.nombreCuenta = '';
     this.balanceCuenta = 0;
     this.tipoCuenta = this.tipos[0].value;
-    this.idCuentaSeleccionada = null; 
+    this.idCuentaSeleccionada = null;
     this.isEditMode = false;
   }
-  
-  
+
+  openCreateAccountModal() {
+    console.log("Abriendo modal de creación de cuenta");
+    this.resetForm();
+    this.modalVisible = true;
+  }
 }
