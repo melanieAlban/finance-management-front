@@ -11,3 +11,7 @@
   width: 600px !important;
   min-height: 500px;
 }
+::ng-deep .color-boton{
+  background-color: var(--blue3-color) !important;
+  border: none !important;
+}

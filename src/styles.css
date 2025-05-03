@@ -1,5 +1,6 @@
 @import "tailwindcss";
  @import "primeicons/primeicons.css";      
+ 
 body {
     font-family: 'Montserrat', sans-serif;
     
@@ -11,5 +12,6 @@ body {
     --blue2-color:#00517A;
     --gray-color: #d0d1d280;
     --bluelight-color: #00517a2f;
+    --blue3-color: #008cce;
 }
   
