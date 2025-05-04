@@ -67,11 +67,15 @@ export class ListBudgetsComponent {
 
   obtenerPresupuestos() {
     this.BudgetService.getAll().subscribe((data) => {
-      this.presupuestos = data;
+      this.presupuestos = data.map(p => {
+        const categoria = this.categorias.find(cat => cat.value === p.category);
+        return {
+          ...p,
+          icon: categoria?.icon || ''
+        };
+      });
     });
   }
-  
-
   
 
   guardarPresupuesto() {
@@ -165,7 +169,11 @@ export class ListBudgetsComponent {
     if (valorActual.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
       event.preventDefault();
     }
+    if (event.key === '-') {
+      event.preventDefault(); 
+    }
   }
+  
   resetCampos() {
     this.cantidad = null; 
     this.nombre = '';

@@ -123,62 +123,50 @@ export class HeaderComponent {
   }
 
   guardarRegistro() {
+    // Verificación de campos vacíos
     if (
-      this.monto &&
-      this.cuentaSeleccionada &&
-      this.divisaSeleccionada &&
-      this.categoriaSeleccionada &&
-      this.fecha
+      !this.monto ||
+      !this.cuentaSeleccionada ||
+      !this.divisaSeleccionada ||
+      !this.categoriaSeleccionada ||
+      !this.fecha
     ) {
-
-
-      const registro = {
-        type: this.selectedType,
-        amount: this.monto,
-        accountId: this.cuentaSeleccionada,
-        date: this.fecha,
-        description: this.descripcion,
-        category: this.categoriaSeleccionada.value,
-      };
-
-      console.log('Enviando a backend:', registro);
-
-      this.TransactionService.create(registro).subscribe({
-        next: (res) => {
-          console.log('Registro guardado:', res);
-          this.resetCampos();
-          this.display = false;
-        },
-        error: (err) => {
-          console.error('Error al guardar el registro:', err);
-          alert('Error al guardar el registro. Inténtelo nuevamente.');
-        }
+      // Si algún campo está vacío, se muestra un Toast de advertencia
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Campos incompletos',
+        detail: 'Por favor, complete todos los campos.',
+        life: 5000
       });
+      return; // No continuar con el registro si faltan campos
     }
+  
+    const registro = {
+      type: this.selectedType,
+      amount: this.monto,
+      accountId: this.cuentaSeleccionada,
+      date: this.fecha,
+      description: this.descripcion,
+      category: this.categoriaSeleccionada.value,
+    };
+  
+    console.log('Enviando a backend:', registro);
+  
+    this.TransactionService.create(registro).subscribe({
+      next: (res) => {
+        console.log('Registro guardado:', res);
+        this.resetCampos();
+        this.display = false;
+      },
+      error: (err) => {
+        console.error('Error al guardar el registro:', err);
+        alert('Error al guardar el registro. Inténtelo nuevamente.');
+      }
+    });
   }
+  
 
-  agregarYCerrarOtro() {
-    if (
-      this.monto &&
-      this.cuentaSeleccionada &&
-      this.divisaSeleccionada &&
-      this.categoriaSeleccionada &&
-      this.fecha
-    ) {
-      const registro = {
-        tipo: this.selectedType,
-        monto: this.monto,
-        cuenta: this.cuentaSeleccionada,
-        divisa: this.divisaSeleccionada,
-        categoria: this.categoriaSeleccionada,
-        fecha: this.fecha
-      };
-      console.log(' Registro y crear otro:', registro);
-      this.resetCampos();
-    } else {
-      console.warn('⚠️ Completa todos los campos obligatorios');
-    }
-  }
+  
 
   resetCampos() {
     this.monto = null;
@@ -190,10 +178,15 @@ export class HeaderComponent {
   }
 
   limitarCaracteres(event: KeyboardEvent) {
+    
+    if (event.key === '-') {
+      event.preventDefault(); 
+    }
     let valorActual = (this.monto ?? '').toString();
-
     if (valorActual.length >= 8 && event.key !== 'Backspace' && event.key !== 'Delete') {
       event.preventDefault();
     }
   }
+  
+  
 }

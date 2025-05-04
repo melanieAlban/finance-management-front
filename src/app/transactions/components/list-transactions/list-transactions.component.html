@@ -1,1 +1,94 @@
-<p>list-transactions works!</p>
+<div class="p-6">
+    <h2 class="text-2xl font-bold mb-4 text-center text-gray-800"> Reporte de Transacciones</h2>
+  
+    <!-- Botones globales -->
+    <div class="flex flex-wrap gap-3 justify-center mb-6">
+      <button pButton label="Ver Ingresos" icon="pi pi-plus" class="p-button-success" (click)="verTodosPorTipo('Ingreso')"></button>
+      <button pButton label="Ver Gastos" icon="pi pi-minus" class="p-button-danger" (click)="verTodosPorTipo('Gasto')"></button>
+      <button pButton label="Ver Todo" icon="pi pi-list" class="p-button-secondary" (click)="verTodas()"></button>
+    </div>
+  
+    <!-- Ingresos -->
+    <div class="mb-10">
+        <h3 class="text-xl font-semibold mb-4 text-green-700">
+            <i class="pi pi-arrow-up mr-2"></i> Ingresos
+          </h3>
+      <div>
+        <h3 class="text-xl font-semibold mb-5 text-gray-700">Total Ingresos: {{ totalIngresos | currency:'USD' }}</h3>
+      </div>
+      <div *ngIf="ingresos.length > 0; else noIngresos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let item of ingresos" class="bg-green-50 border border-green-200 rounded-2xl p-4 flex justify-between items-center shadow hover:shadow-md transition">
+          <div class="flex items-center gap-3">
+            <p-avatar [icon]="getIcon(item.category)" shape="circle" class="bg-green-200 text-green-900"></p-avatar>
+            <div>
+              <p class="text-green-800 font-semibold">{{ getCategoryLabel(item.category) }}</p>
+              <p class="text-sm text-green-600">Total: {{ item.totalAmount | currency:'USD' }}</p>
+            </div>
+          </div>
+          <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" style="color: #6b7280;" (click)="verDetallePorCategoria('Ingreso', item.category)"></button>
+
+
+        </div>
+      </div>
+      <ng-template #noIngresos>
+        <p class="text-gray-500">No hay ingresos registrados.</p>
+      </ng-template>
+    </div>
+  
+    <!-- Gastos -->
+    <div>
+      <h3 class="text-xl font-semibold mb-4 text-red-700"><i class="pi pi-arrow-down mr-2"></i>Gastos</h3>
+      <div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-4">Total Gastos: {{ totalGastos | currency:'USD' }}</h3>
+      </div>
+      <div *ngIf="gastos.length > 0; else noGastos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let item of gastos" class="bg-red-50 border border-red-200 rounded-2xl p-4 flex justify-between items-center shadow hover:shadow-md transition">
+          <div class="flex items-center gap-3">
+            <p-avatar [icon]="getIcon(item.category)" shape="circle" class="bg-red-200 text-red-900"></p-avatar>
+            <div>
+              <p class="text-red-800 font-semibold">{{ getCategoryLabel(item.category) }}</p>
+              <p class="text-sm text-red-600">Total: {{ item.totalAmount | currency:'USD' }}</p>
+            </div>
+          </div>
+          <button pButton icon="pi pi-eye" class="p-button-text p-button-sm" style="color: #6b7280;background-color: transparent; border: none; box-shadow: none;" (click)="verDetallePorCategoria('Gasto', item.category)"></button>
+
+        </div>
+      </div>
+      <ng-template #noGastos>
+        <p class="text-gray-500">No hay gastos registrados.</p>
+      </ng-template>
+    </div>
+  </div>
+  
+  <!-- Modal -->
+  <p-dialog header="{{ tituloModal }}" [(visible)]="mostrarModal" [modal]="true" [style]="{width: '700px'}" [closable]="true">
+  <div *ngIf="transaccionesModal.length > 0; else noDetalle" class="space-y-4">
+    <div *ngFor="let tx of transaccionesModal" class="flex items-start gap-4 border-b pb-4">
+      <p-avatar [icon]="getIcon(tx.category)" shape="circle"
+        [styleClass]="tx.type === 'Ingreso' ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'">
+      </p-avatar>
+
+      <div class="flex-1">
+        <div class="flex justify-between items-center">
+          <p class="font-semibold text-lg">{{ getCategoryLabel(tx.category) }}</p>
+          <p class="text-right font-bold"
+             [ngClass]="tx.type === 'Ingreso' ? 'text-green-600' : 'text-red-600'">
+            {{ tx.amount | currency:'USD' }}
+          </p>
+        </div>
+
+        <p class="text-sm text-gray-600 flex items-center gap-1 mt-1">
+          <i class="pi pi-calendar"></i> {{ tx.date | date:'mediumDate' }}
+        </p>
+
+        <p class="text-sm text-gray-500 mt-1 italic" *ngIf="tx.description">
+          <i class="pi pi-comment mr-1"></i><strong>Descripción:</strong> {{ tx.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noDetalle>
+    <p class="text-center text-gray-500">No hay transacciones registradas para esta categoría.</p>
+  </ng-template>
+</p-dialog>

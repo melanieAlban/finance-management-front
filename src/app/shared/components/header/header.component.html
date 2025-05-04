@@ -12,17 +12,17 @@
     
       <button pButton icon="pi pi-bell" label="Notificaciones"
         class="p-button-rounded p-button-text" (click)="mostrarNotificaciones()"></button>
-        <app-notificaciones [visible]="notificacionesVisibles" (visibleChange)="notificacionesVisibles = $event"></app-notificaciones>
+      <app-notificaciones [visible]="notificacionesVisibles" (visibleChange)="notificacionesVisibles = $event"></app-notificaciones>
       <button pButton icon="pi pi-user" label="Perfil" class="p-button-rounded p-button-text"></button>
     </div>
-    
   </div>
 </p-toolbar>
+
 <!-- Modal de Registro -->
 <app-modal [visible]="display" (visibleChange)="display = false; resetCampos()" header="Control de Finanzas">
   <div class="text-center mb-4">
     <div class="inline-flex rounded-full bg-gradient-to-r from-indigo-600 to-purple-700 p-1">
-      <ng-container *ngFor="let tipo of ['Gasto', 'Ingreso', 'Transferencia']">
+      <ng-container *ngFor="let tipo of ['Gasto', 'Ingreso']">
         <button class="px-4 py-2 rounded-full text-white hover:bg-white hover:text-indigo-600 font-semibold transition"
           [ngClass]="{
             'bg-white text-indigo-600': selectedType === tipo,
@@ -36,51 +36,9 @@
 
   <div class="space-y-4" style="min-height: 400px;">
 
-    <!-- Si el tipo es Transferencia -->
-    <ng-container *ngIf="selectedType === 'Transferencia'; else noTransferencia">
+    <!-- Si el tipo es Gasto o Ingreso -->
+    <ng-container *ngIf="selectedType === 'Gasto' || selectedType === 'Ingreso'">
       <!-- Monto -->
-      <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Monto</label>
-        <p-inputNumber [(ngModel)]="monto" mode="currency" currency="USD" locale="en-US" placeholder="$0.00"
-          class="w-full"
-          inputStyleClass="!w-full p-3 border border-gray-300 rounded-lg text-center text-2xl font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          (keydown)="limitarCaracteres($event)" />
-      </div>
-
-      <!-- Cuenta Origen y Cuenta Destino -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Cuenta Origen</label>
-          <p-dropdown [options]="cuentas" [(ngModel)]="cuentaOrigen" optionLabel="name" optionValue="id"
-            placeholder="Selecciona cuenta origen" class="w-full" [scrollHeight]="'130px'"></p-dropdown>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Cuenta Destino</label>
-          <p-dropdown [options]="cuentas" [(ngModel)]="cuentaDestino" optionLabel="name" optionValue="id"
-            placeholder="Selecciona cuenta destino" class="w-full" [scrollHeight]="'130px'"></p-dropdown>
-        </div>
-      </div>
-
-      <!-- Fecha -->
-      <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Fecha</label>
-        <input type="date"
-          class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          [(ngModel)]="fecha" />
-      </div>
-
-      <!-- Descripción -->
-      <div>
-        <label class="block text-sm font-medium text-gray-600 mb-1">Descripción</label>
-        <textarea pTextarea [(ngModel)]="descripcion" rows="3"
-          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          style="resize: none"></textarea>
-      </div>
-    </ng-container>
-
-    <!-- Si no es transferencia -->
-    <ng-template #noTransferencia>
-      <!-- Cantidad -->
       <div>
         <label class="block text-sm font-medium text-gray-600 mb-1">Cantidad</label>
         <p-inputNumber [(ngModel)]="monto" mode="currency" currency="USD" locale="en-US" placeholder="$0.00"
@@ -137,17 +95,13 @@
           class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
           style="resize: none"></textarea>
       </div>
-    </ng-template>
+    </ng-container>
 
     <!-- Botones -->
     <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg mt-4"
       (click)="guardarRegistro()">
       Agregar registro
     </button>
-
-    <a href="#" class="block text-center text-indigo-600 hover:underline text-sm font-medium mt-2"
-      (click)="agregarYCerrarOtro()">
-      Agregar y crear otro
-    </a>
   </div>
 </app-modal>
+<p-toast></p-toast>
