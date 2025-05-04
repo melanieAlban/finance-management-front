@@ -5,14 +5,16 @@ import { CommonModule } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 interface Transaction {
   id: number;
   amount: number;
-  type: string; // "Ingreso" o "Gasto"
-  date: string; // o Date si lo parseas
+  type: string; 
+  date: string; 
   accountId: number;
-  category: string; // "COMIDA", "TRANSPORTE", etc.
+  category: string; 
   userId: number;
   description: string;
 }
@@ -31,7 +33,7 @@ export class ListTransactionsComponent implements OnInit {
   totalIngresos: number = 0;
   totalGastos: number = 0;
 
-  // Para los modales
+  private destroy$ = new Subject<void>();
   mostrarModal: boolean = false;
   transaccionesModal: Transaction[] = [];
   tituloModal: string = '';
@@ -39,6 +41,15 @@ export class ListTransactionsComponent implements OnInit {
   constructor(private transactionService: TransactionService) {}
 
   ngOnInit(): void {
+    this.obternerTransacciones();
+    this.transactionService.transactionsUpdated$
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(() => {
+            this.obternerTransacciones(); 
+          });
+  }
+
+  obternerTransacciones() {
     this.transactionService.getAll().subscribe(data => {
       this.transacciones = data;
       this.agruparTransacciones();
@@ -46,22 +57,27 @@ export class ListTransactionsComponent implements OnInit {
   }
 
   agruparTransacciones(): void {
+    // Reiniciar los totales antes de cada nueva actualización
+    this.totalIngresos = 0;
+    this.totalGastos = 0;
+  
     const ingresosMap = new Map<string, number>();
     const gastosMap = new Map<string, number>();
-
+  
     this.transacciones.forEach(tx => {
       if (tx.type === 'Ingreso') {
         ingresosMap.set(tx.category, (ingresosMap.get(tx.category) || 0) + tx.amount);
-        this.totalIngresos += tx.amount; // Sumar al total de ingresos
+        this.totalIngresos += tx.amount; 
       } else if (tx.type === 'Gasto') {
         gastosMap.set(tx.category, (gastosMap.get(tx.category) || 0) + tx.amount);
-        this.totalGastos += tx.amount; // Sumar al total de gastos
+        this.totalGastos += tx.amount; 
       }
     });
-
+  
     this.ingresos = Array.from(ingresosMap.entries()).map(([category, totalAmount]) => ({ category, totalAmount }));
     this.gastos = Array.from(gastosMap.entries()).map(([category, totalAmount]) => ({ category, totalAmount }));
   }
+  
 
   getIcon(category: string): string {
     const icons: Record<string, string> = {
