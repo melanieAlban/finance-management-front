@@ -16,7 +16,17 @@ import { FormsModule } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
+export enum GoalStatus {
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+  EXPIRED = 'EXPIRED',
+}
 
+// Interfaz para las opciones de estado en la UI
+interface StatusOption {
+  label: string;
+  value: GoalStatus;
+}
 interface Frequency {
   value: string;
   label: string;
@@ -28,7 +38,9 @@ interface Goal {
   depositFrequency: string | null;
   lastDepositDate: Date | null;
   currentBalance?: number | null; // Añadido para el saldo actual
-  creationDate?: Date | null; // Añadido para la fecha de creación
+  creationDate?: Date | null;
+  goalStatus?: GoalStatus | null;// Añadido para el estado de la meta
+   // Añadido para la fecha de creación
 }
 @Component({
   selector: 'app-list-goals',
@@ -86,6 +98,7 @@ export class ListGoalsComponent {
     deadline: null,
     depositFrequency: null,
     lastDepositDate: new Date(),
+    goalStatus: GoalStatus.ACTIVE,
   };
 
   paymentAmount: number | null = null;
@@ -95,6 +108,12 @@ export class ListGoalsComponent {
     { label: 'Diariamente', value: 'DAILY' },
     { label: 'Semanalmente', value: 'WEEKLY' },
     { label: 'Mensualmente', value: 'MONTHLY' },
+  ];
+  
+  status: StatusOption[] = [
+    { label: 'Activa', value: GoalStatus.ACTIVE },
+    { label: 'Completada', value: GoalStatus.COMPLETED },
+    { label: 'Expirada', value: GoalStatus.EXPIRED },
   ];
   private frequencyLabels: { [key: string]: string } = {
     DAILY: 'Diariamente',
@@ -381,22 +400,77 @@ export class ListGoalsComponent {
 
   addPayment() {
     if (this.paymentAmount && this.paymentAmount > 0 && this.currentGoal) {
+    
+      const remainingAmount = this.currentGoal.targetAmount - (this.currentGoal.currentBalance || 0);
+  
+      // Validar que el monto a abonar no exceda el monto restante
+      if (this.paymentAmount > remainingAmount) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Monto Excedido',
+          detail: `El monto a abonar ($${this.paymentAmount}) excede el monto restante ($${remainingAmount}). El máximo permitido es $${remainingAmount}.`
+        });
+        return; // Detener la ejecución si excede
+      }
+  
       // Incrementar el saldo actual de la meta seleccionada
       this.currentGoal.currentBalance = (this.currentGoal.currentBalance || 0) + this.paymentAmount;
       this.currentGoal.lastDepositDate = new Date();
       // Recalcular el progreso solo para esta meta
       this.calculateProgressForGoal(this.currentGoal);
-
+  
       // Llamar al servicio para actualizar el saldo de la meta
       this.GoalsService.update(this.currentGoal).subscribe({
         next: () => {
+          // Guardar el monto abonado para el mensaje
+          const amountAdded = this.paymentAmount;
+  
+          // Verificar si se alcanzó el 100% del progreso
+          // Verificar si se alcanzó el 100% del progreso
+if (this.currentGoal.progressValue >= 100) {
+  this.messageService.add({
+    severity: 'success',
+    summary: '¡Felicidades! 🎉',
+    detail: `Has alcanzado tu meta "${this.currentGoal.name}"! Se marcará como completada.`,
+    life: 5000 // Mostrar mensaje durante 5 segundos
+  });
+
+  // Cambiar el estado de la meta a COMPLETED después de 5 segundos
+  setTimeout(() => {
+    if (this.currentGoal && this.currentGoal.id) {
+      this.currentGoal.goalStatus = GoalStatus.COMPLETED;
+
+      this.GoalsService.update(this.currentGoal).subscribe({
+        next: () => {
           this.messageService.add({
-            severity: 'success',
-            summary: 'Abono agregado',
-            detail: `Se agregó $${this.paymentAmount} a la meta.`,
+            severity: 'info',
+            summary: 'Meta Completada',
+            detail: `La meta "${this.currentGoal.name}" ha sido marcada como completada.`,
           });
-          this.displayAddPaymentModal = false; // Cerrar el modal
-          this.paymentAmount = 0; // Limpiar el campo de monto
+          this.displayAddPaymentModal = false; 
+          this.loadGoals(); 
+          this.paymentAmount = 0; 
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo actualizar el estado de la meta.',
+          });
+        }
+      });
+    }
+  }, 5000);
+}
+else {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Abono agregado',
+              detail: `Se agregó $${amountAdded} a la meta.`,
+            });
+            this.displayAddPaymentModal = false; // Cerrar el modal
+            this.paymentAmount = 0; // Limpiar el campo de monto
+          }
         },
         error: () => {
           this.messageService.add({
@@ -414,6 +488,8 @@ export class ListGoalsComponent {
       });
     }
   }
+
+
 
   selectGoal(goal: any): void {
     this.currentGoal = goal; // Asignamos la meta seleccionada a currentGoal
