@@ -67,11 +67,15 @@ export class ListBudgetsComponent {
 
   obtenerPresupuestos() {
     this.BudgetService.getAll().subscribe((data) => {
-      this.presupuestos = data;
+      this.presupuestos = data.map(p => {
+        const categoria = this.categorias.find(cat => cat.value === p.category);
+        return {
+          ...p,
+          icon: categoria?.icon || ''
+        };
+      });
     });
   }
-  
-
   
 
   guardarPresupuesto() {
