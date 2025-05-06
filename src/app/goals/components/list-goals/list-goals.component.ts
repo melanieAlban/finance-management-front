@@ -470,6 +470,7 @@ else {
             });
             this.displayAddPaymentModal = false; // Cerrar el modal
             this.paymentAmount = 0; // Limpiar el campo de monto
+            this.loadGoals(); 
           }
         },
         error: () => {

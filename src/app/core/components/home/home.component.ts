@@ -15,6 +15,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { TransactionService } from '../../../services/transaction.service';
 import { TransactionComponent } from '../../../shared/components/transaction/transaction.component';
 import { ChartModule } from 'primeng/chart';
+import { Subject, takeUntil } from 'rxjs';
 interface TypeInterface {
   name: string;
   value: string;
@@ -22,11 +23,12 @@ interface TypeInterface {
 @Component({
   selector: 'app-home',
   imports: [CommonModule, CarouselModule, CardModule, ModalComponent,
-    Select, CustomInputComponent, ButtonComponent, FormsModule, StepsModule, TimelineModule, InputNumberModule, TransactionComponent,ChartModule],
+    Select, CustomInputComponent, ButtonComponent, FormsModule, StepsModule, TimelineModule, InputNumberModule, TransactionComponent, ChartModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent  {
+export class HomeComponent {
+  private destroy$ = new Subject<void>()
   cuentaService = inject(AccountService);
   transactionService = inject(TransactionService);
   reportService = inject(ReportService);
@@ -49,22 +51,23 @@ export class HomeComponent  {
     { name: 'Cuenta bancaria', value: 'BANK_ACCOUNT' },
     { name: 'Efectivo', value: 'CASH' }
   ];
-  ngOnInit() {
-    this.cuentaService.getAll().subscribe((res) => {
-      this.cuentas = res;
-      this.cuentasWithAddButton = [...this.cuentas, { isAddButton: true }];
-    });
+  getTypeName(tipo: string): string {
+    return this.tipos.find(t => t.value === tipo)?.name!;
+  }
 
-    this.transactionService.getAll().subscribe((res) => {
-      this.transactions = res.slice(0, 5);
-      this.prepareChartData();
-    });
+  ngOnInit() {
+    this.cargarDatos()
 
     this.reportService.getReport().subscribe((report) => {
       this.totalCuentas = report.accounts;
       this.totalIngresos = report.incomes;
       this.totalGastos = report.expenses;
     });
+
+    this.transactionService.transactionsUpdated$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.cargarDatos())
+
     this.carouselResponsiveOptions = [
       {
         breakpoint: '1675px',
@@ -92,7 +95,22 @@ export class HomeComponent  {
         numScroll: 1,
       },
     ];
-   
+
+  }
+
+  private cargarDatos() {
+    this.transactionService.getAll().subscribe(res => {
+      this.transactions = res.slice(0, 5)
+      this.prepareChartData()
+    })
+    this.reportService.getReport().subscribe(r => {
+      this.totalIngresos = r.incomes
+      this.totalGastos = r.expenses
+    })
+    this.cuentaService.getAll().subscribe(res => {
+      this.cuentas = res;
+      this.cuentasWithAddButton = [...this.cuentas, { isAddButton: true }];
+    });
   }
 
   abrirModal() {
@@ -118,9 +136,8 @@ export class HomeComponent  {
       this.modalVisible = false;
       this.ngOnInit();
     });
-
-
   }
+
   getTipoClass(tipo: string): string {
     switch (tipo) {
       case 'CREDIT_CARD':
@@ -135,75 +152,74 @@ export class HomeComponent  {
         return '';
     }
   }
+
   chartData: any;
-chartOptions: any;
+  chartOptions: any;
 
+  prepareChartData() {
+    const ingresosMap = new Map<string, number>();
+    const gastosMap = new Map<string, number>();
 
-
-prepareChartData() {
-  const ingresosMap = new Map<string, number>();
-  const gastosMap = new Map<string, number>();
-
-  this.transactions.forEach(t => {
-    const date = t.date;
-    const amount = parseFloat(t.amount);
-    if (t.type === 'Ingreso') {
-      ingresosMap.set(date, (ingresosMap.get(date) || 0) + amount);
-    } else if (t.type === 'Gasto') {
-      gastosMap.set(date, (gastosMap.get(date) || 0) + amount);
-    }
-  });
-
-  const allDates = Array.from(new Set([...ingresosMap.keys(), ...gastosMap.keys()])).sort();
-
-  this.chartData = {
-    labels: allDates,
-    datasets: [
-      {
-        label: 'Gastos',
-        data: allDates.map(date => gastosMap.get(date) || 0),
-        borderColor: '#ef4444', // rojo
-        tension: 0.4,
-        fill: false
-      },
-      {
-        label: 'Ingresos',
-        data: allDates.map(date => ingresosMap.get(date) || 0),
-        borderColor: '#22c55e', // verde
-        tension: 0.4,
-        fill: false
+    this.transactions.forEach(t => {
+      const date = t.date;
+      const amount = parseFloat(t.amount);
+      if (t.type === 'Ingreso') {
+        ingresosMap.set(date, (ingresosMap.get(date) || 0) + amount);
+      } else if (t.type === 'Gasto') {
+        gastosMap.set(date, (gastosMap.get(date) || 0) + amount);
       }
-    ]
-  };
+    });
 
-  this.chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top'
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false
-      }
-    },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Fecha'
+    const allDates = Array.from(new Set([...ingresosMap.keys(), ...gastosMap.keys()])).sort();
+
+    this.chartData = {
+      labels: allDates,
+      datasets: [
+        {
+          label: 'Gastos',
+          data: allDates.map(date => gastosMap.get(date) || 0),
+          borderColor: '#ef4444', // rojo
+          tension: 0.4,
+          fill: false
+        },
+        {
+          label: 'Ingresos',
+          data: allDates.map(date => ingresosMap.get(date) || 0),
+          borderColor: '#22c55e',
+          tension: 0.4,
+          fill: false
+        }
+      ]
+    };
+
+    this.chartOptions = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top'
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
         }
       },
-      y: {
-        title: {
-          display: true,
-          text: 'Monto ($)'
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Fecha'
+          }
         },
-        beginAtZero: true
+        y: {
+          title: {
+            display: true,
+            text: 'Monto ($)'
+          },
+          beginAtZero: true
+        }
       }
-    }
-  };
-}
+    };
+  }
 
 
 }
