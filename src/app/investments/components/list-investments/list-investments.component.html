@@ -21,7 +21,7 @@
           icon="pi pi-plus"
           label="Nueva Inversión"
           raised="true"
-          class="bg-blue-600 hover:bg-blue-700 text-white"
+          class="bg-blue-600 hover:bg-blue-700 text-white color-buton"
           (click)="modalVisible = true"/>
       </div>
     </div>
@@ -141,7 +141,9 @@
             </div>
           </div>
           <div>
-            <p class="text-sm text-gray-600 mb-2">Progreso</p>
+            <p class="text-sm font-medium text-green-600">
+              Rendimiento (Ganancia): {{ calcularGanancia(investment.initialAmount, investment.returnRate, investment.progress) | currency:'USD' }}
+            </p>
             <p-progressBar [value]="investment.progress" [showValue]="true" class="h-6"></p-progressBar>
           </div>
           <div class="grid grid-cols-2 gap-4 text-sm">
