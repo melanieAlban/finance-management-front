@@ -1,0 +1,62 @@
+::ng-deep .boton-negro {
+    background-color: transparent  !important ;
+    color: var(--blue-color) !important ;
+    border: none !important;
+    border-radius: 15px !important;
+    
+}
+
+/* ::ng-deep .boton-negro:hover{
+    background-color: var(--blue-color)!important; 
+    color: white !important;
+    border: none !important;
+    
+} */
+::ng-deep .custom-menu .p-menu {
+    position: absolute;
+    z-index: 1000; /* Ensure it appears above other elements */
+    margin-top: 0;
+    margin-left: -150px; /* Adjust this value to position the menu to the left of the button */
+    transform: translateY(30px); /* Adjust vertical alignment if needed */
+  }
+
+::ng-deep .p-progressbar-value {
+    background-color: var(--sky-color) !important;
+
+}
+::ng-deep .boton-azul{
+    background-color: var(--blue2-color) !important;
+}
+
+::ng-deep .puntitos{
+    background-color: transparent !important;
+    color:  var(--blue2-color) !important;
+    border: none !important;
+    
+}
+::ng-deep .puntitos:hover{
+    background-color: var(--gray-color) !important;
+    color:  var(--blue2-color)!important;
+    border: none !important;
+    border-radius: 50px;
+    
+}
+::ng-deep .boton-crear{
+    background-color: var(--blue2-color) !important;
+}
+::ng-deep .boton-crear:hover{
+    background-color: transparent !important;
+    color: var(--blue2-color) !important;
+    border-color:  var(--blue2-color) !important;
+}
+::ng-deep .boton-cancelar{
+    background-color: transparent !important;
+    color: var(--blue-color) !important;
+   border: none !important;
+}
+::ng-deep .boton-cancelar:hover{
+    background-color: var(--gray-color) !important;
+    color: var(--blue2-color) !important;
+    border-color:  var(--blue2-color) !important;
+}
+

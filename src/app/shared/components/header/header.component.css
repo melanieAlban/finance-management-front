@@ -1,7 +1,36 @@
 :host ::ng-deep .p-button.p-button-text {
-    color: #4b5563 !important; 
+  color: #4b5563 !important;
+}
+
+  p .p-button-icon {
+  color: #fff !important;
+}
+
+/* En app-modal.component.css */
+:host ::ng-deep .p-dialog {
+  width: 600px !important;
+  min-height: 500px;
+}
+::ng-deep .color-boton {
+  background-color: var(--blue3-color) !important;
+  border: none !important;
+}
+
+@media (max-width: 785px) {
+  .header-container {
+    justify-content: center;
   }
-  
-  :host ::ng-deep .p-button-icon {
-    color: #4b5563 !important; 
+  .saludo {
+    display: none;
   }
+}
+
+@media (max-width: 600px) {
+  .header-container {
+    justify-content: flex-end;
+
+    ::ng-deep .p-button-label {
+      display: none;
+    }
+  }
+}

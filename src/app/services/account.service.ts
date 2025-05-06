@@ -32,5 +32,8 @@ export class AccountService {
   getTotalBalance() {
     return this.api.get<number>('account/total-balance');
   }
+  getAllByName(name: string) {
+    return this.api.get<any[]>(`account/name/${name}`);
+  }
   
 }

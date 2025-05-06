@@ -1,0 +1,9 @@
+:host {
+    display: block;
+  }
+  
+  ::ng-deep  .color-buton .p-button{
+    background-color: var(--blue-color) !important;
+    border: none !important;
+    
+}

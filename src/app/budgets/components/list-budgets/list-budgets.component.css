@@ -1,0 +1,5 @@
+::ng-deep  .color-buton{
+    background-color: var(--blue-color) !important;
+    border: none !important;
+    
+}

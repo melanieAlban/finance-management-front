@@ -1,126 +1,140 @@
-
-<app-toast
-
-  [severity]="severity"
-  [summary]="summary"
-  [detail]="detail">
-  
+<app-toast [severity]="severity" [summary]="summary" [detail]="detail">
 </app-toast>
 
 <div class="bg-gray-100 text-gray-900 p-6">
-
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-semibold text-gray-900">Lista de Cuentas</h1>
-      <app-button icon="pi pi-plus" label="Nueva Cuenta" raised="true" (click)="modalVisible = true"/>
-      
-    </div>
-   <app-modal [(visible)]="modalVisible" [width]="'40vw'" header="{{ isEditMode ? 'Editar Cuenta' : 'Crear Cuenta' }}" >
-  <div class="space-y-4">
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Cuenta</label>
-      <app-custom-input
-        [placeholder]="'Ingrese el nombre de la cuenta...'"
-        [type]="'text'" 
-        [(ngModel)]="nombreCuenta"/>
-        
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de cuenta</label>
-    
-      <p-select
-        [options]="tipos"
-        [(ngModel)]="tipoCuenta"
-        optionValue="value"
-        checkmark="true"
-        showClear="true"
-        placeholder="Seleccione el tipo de cuenta"
-        optionLabel="name"/>
-    </div>
-
-    <div>
-      <label class="block text-sm font-medium text-gray-700 mb-1">Balance</label>
-      <app-custom-input
-        [placeholder]="'Ingrese el balance...'"
-        [type]="'number'" 
-        [(ngModel)]="balanceCuenta"/>
-    </div>
-
-    <div class="flex justify-end space-x-3 pt-4">
-      <app-button
-        icon="pi pi-check"
-        label="{{ isEditMode ? 'Actualizar' : 'Registrar' }}"
-
-        raised="true"
-        (click)="guardarCuenta()"/>
-      <app-button
-        icon="pi pi-times"
-        label="Cancelar"
-        raised="true"
-        severity="danger"
-        (click)="cancelar()"/>
-    </div>
-    
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-semibold text-gray-900">Lista de Cuentas</h1>
+    <app-button
+      icon="pi pi-plus"
+      label="Nueva Cuenta"
+      raised="true"
+      class="color-buton"
+      (click)="openCreateAccountModal()"
+    />
   </div>
-</app-modal>
+  <app-modal
+    [(visible)]="modalVisible"
+    [width]="'40vw'"
+    header="{{ isEditMode ? 'Editar Cuenta' : 'Crear Cuenta' }}"
+  >
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Cuenta</label
+        >
+        <app-custom-input
+          [placeholder]="'Ingrese el nombre de la cuenta...'"
+          [type]="'text'"
+          [(ngModel)]="nombreCuenta"
+        />
+      </div>
 
-    <div class="flex flex-wrap gap-4 mb-6 items-end">
-      <app-custom-input
-        [label]="'Nombre de cuenta'"
-        [placeholder]="'Buscar por nombre...'"
-      />
-  
-      <p-select
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Tipo de cuenta</label
+        >
+
+        <p-select
+          [options]="tipos"
+          [(ngModel)]="tipoCuenta"
+          optionValue="value"
+          checkmark="true"
+          showClear="true"
+          placeholder="Seleccione el tipo de cuenta"
+          optionLabel="name"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1"
+          >Balance</label
+        >
+        <p-inputnumber
+          [(ngModel)]="balanceCuenta"
+          max="100000000000"
+          min="0" 
+        />
+      </div>
+
+      <div class="flex justify-end space-x-3 pt-4">
+        <app-button
+          icon="pi pi-check"
+          label="{{ isEditMode ? 'Actualizar' : 'Registrar' }}"
+          raised="true"
+          (click)="guardarCuenta()"
+        />
+        <app-button
+          icon="pi pi-times"
+          label="Cancelar"
+          raised="true"
+          severity="danger"
+          (click)="cancelar()"
+        />
+      </div>
+    </div>
+  </app-modal>
+
+  <div class="flex flex-wrap gap-4 mb-6 items-end">
+    <app-custom-input
+      [label]="'Nombre de cuenta'"
+      [placeholder]="'Buscar por nombre...'"
+      [(ngModel)]="nombreBusqueda"
+      (ngModelChange)="buscarCuentasPorNombre($event)"
+    />
+
+    <p-select
       [options]="tipos"
       placeholder="Filtrar por tipo"
       optionLabel="name"
       optionValue="value"
       showClear="true"
       [(ngModel)]="filtroTipo"
-      />
-    </div>
-    
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-      <app-card *ngFor="let cuenta of cuentasFiltradas" [title]="cuenta.name">
-        <div class="flex flex-col items-center mb-4">
-          <div>
-            <p-knob
-              [(ngModel)]="cuenta.balance"
-              readonly="true"
-              [max]="totalBalance" 
-              >
-            </p-knob>
-          </div>
-    
-          <p class="text-gray-700 text-sm text-center mt-2">
-            Balance: <strong>{{ cuenta.balance | currency:'USD'}}</strong>
-          </p>
-    
-          <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full mt-2"  [ngClass]="getTipoClass(cuenta.type)">
-            {{ getTypeName(cuenta.type) }}
-          </span>
+    />
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+    <app-card *ngFor="let cuenta of cuentasFiltradas" [title]="cuenta.name">
+      <div class="flex flex-col items-center mb-4">
+        <div>
+          <p-knob
+            [(ngModel)]="cuenta.balance"
+            readonly="true"
+            [max]="totalBalance"
+          >
+          </p-knob>
         </div>
-    
-        <div class="flex justify-end space-x-3">
-          <app-button
-            icon="pi pi-pencil"
-            severity="warn"
-            rounded="true"
-            text="true"
-            (click)="editarCuenta(cuenta)"
-          ></app-button>
-          <app-button
-            icon="pi pi-trash"
-            severity="danger"
-            rounded="true"
-            text="true"
-            (click)="eliminarCuenta(cuenta)"
-          ></app-button>
-        </div>
-      </app-card>
-    </div>
-   <!-- <div class="flex justify-end p-4">
+
+        <p class="text-gray-700 text-sm text-center mt-2">
+          Balance: <strong>{{ cuenta.balance | currency : "USD" }}</strong>
+        </p>
+
+        <span
+          class="inline-block px-2 py-1 text-xs font-semibold rounded-full mt-2"
+          [ngClass]="getTipoClass(cuenta.type)"
+        >
+          {{ getTypeName(cuenta.type) }}
+        </span>
+      </div>
+
+      <div class="flex justify-end space-x-3">
+        <app-button
+          icon="pi pi-pencil"
+          severity="warn"
+          rounded="true"
+          text="true"
+          (click)="editarCuenta(cuenta)"
+        ></app-button>
+        <app-button
+          icon="pi pi-trash"
+          severity="danger"
+          rounded="true"
+          text="true"
+          (click)="eliminarCuenta(cuenta)"
+        ></app-button>
+      </div>
+    </app-card>
+  </div>
+  <!-- <div class="flex justify-end p-4">
       <div class="p-4 rounded-xl bg-gray-900 text-white shadow-xl space-y-4 w-1/4">
         <h2 class="text-lg font-semibold">Resumen de balances</h2>
     
@@ -138,6 +152,4 @@
     </div> 
     
      -->
-    
-  </div>
-  
+</div>
