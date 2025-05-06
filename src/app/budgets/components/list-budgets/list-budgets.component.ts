@@ -111,11 +111,10 @@ export class ListBudgetsComponent {
           },
           error: (err) => {
             this.messageService.add({
-              severity: 'error',  
+              severity: 'error',
               summary: 'Error',
-              detail: 'Error al actualizar el presupuesto'
-            }); 
-
+              detail: err.error.message,
+            });
           }
         });
       } else {
@@ -135,10 +134,8 @@ export class ListBudgetsComponent {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: 'Error al crear el presupuesto'
+              detail: err.error.message,
             });
-            console.error('Error al crear presupuesto:', err);
-            
           }
         });
       }

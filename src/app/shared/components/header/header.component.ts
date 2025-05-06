@@ -159,8 +159,11 @@ export class HeaderComponent {
         this.display = false;
       },
       error: (err) => {
-        console.error('Error al guardar el registro:', err);
-        alert('Error al guardar el registro. Inténtelo nuevamente.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.error.message,
+        });
       }
     });
   }
