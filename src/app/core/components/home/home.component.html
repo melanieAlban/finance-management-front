@@ -13,7 +13,7 @@
               <p class="text-sm font-semibold capitalize truncate max-w-[120px]">{{ cuenta.name }}</p>
               <p class="text-xs font-medium capitalize px-2 py-1 rounded-full w-fit mt-1"
                 [ngClass]="getTipoClass(cuenta.type) + ' bg-opacity-20'">
-                {{ cuenta.type }}
+                {{ getTypeName(cuenta.type) }}
               </p>
             </div>
             <p class="text-lg font-bold text-gray-800">

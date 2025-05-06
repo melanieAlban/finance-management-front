@@ -49,6 +49,10 @@ export class HomeComponent  {
     { name: 'Cuenta bancaria', value: 'BANK_ACCOUNT' },
     { name: 'Efectivo', value: 'CASH' }
   ];
+  getTypeName(tipo: string): string {
+    return this.tipos.find(t => t.value === tipo)?.name!;
+
+  }
   ngOnInit() {
     this.cuentaService.getAll().subscribe((res) => {
       this.cuentas = res;

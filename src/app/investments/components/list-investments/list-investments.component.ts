@@ -74,7 +74,18 @@ export class ListInvestmentsComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
+  calcularGanancia(initialAmount: number, returnRate: number, progress: number): number {
+    const gananciaPotencial = initialAmount * (returnRate / 100);
+    const gananciaActual = gananciaPotencial * (progress / 100);
+    return Number(gananciaActual.toFixed(2));
+  }
+  get gananciaActual(): number {
+    return this.calcularGanancia(
+      this.initialAmountInvestment,
+      this.returnRateInvestment,
+      this.progressInvestment
+    );
+  }
   obtenerInvestments() {
     this.investmentService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
